@@ -27,33 +27,34 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/_variables.scss';
+@import '../styles/abstracts';
 
 .home {
+  box-sizing: border-box;
   padding: 6vw 10vw;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 
 .masthead {
-  display: flex;
-  align-items: flex-end;
-  padding-bottom: 8rem;
+  position: relative;
 }
 
 .logo {
-  height: 36vh;
+  width: 20vw;
+  position: absolute;
+  top: -28vh;
+  left: -11vw;
 
   svg {
-    position: relative;
-    top: -5vw;
     display: block;
-    height: 100%;
-    opacity: .4;
+    height: 36vh;
+    opacity: .2;
   }
 }
 
 .content {
-  margin-left: -4vw;
-  max-width: 860px;
   position: relative;
   z-index: 2;
 }
@@ -61,14 +62,15 @@ export default {
 .headline {
   font-family: $ff--headline;
   line-height: $lh--sm;
-  font-size: 5vw;
+  font-size: 2rem;
+
+  @include mq($bp--mobile) {
+    font-size: 5vw;
+  }
 }
 
 .login {
-  position: absolute;
-  bottom: -8rem;
+  margin-top: $spacing;
 }
-
-
 
 </style>
