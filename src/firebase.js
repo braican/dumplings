@@ -2,9 +2,9 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 
-import config from './firebase.config';
+import { firebaseConfig } from './config';
 
-firebase.initializeApp(config);
+firebase.initializeApp(firebaseConfig);
 
 export const db = firebase.firestore();
 export const auth = firebase.auth();
@@ -16,5 +16,3 @@ export const restaurantsCollection = db.collection('restaurants');
 export const dumplingsCollection = db.collection('dumplings');
 export const commentsCollection = db.collection('comments');
 export const likesCollection = db.collection('likes');
-
-

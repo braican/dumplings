@@ -4,6 +4,7 @@ import firebase from 'firebase/app';
 
 import Home from './views/Home';
 import Dashboard from './views/Dashboard';
+import Admin from './views/Admin';
 
 Vue.use(Router);
 
@@ -26,6 +27,14 @@ const router = new Router({
       path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/admin',
+      name: 'Admin',
+      component: Admin,
       meta: {
         requiresAuth: true,
       },

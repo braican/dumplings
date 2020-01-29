@@ -4,9 +4,9 @@
     :fill="fill"
     :stroke="stroke"
     stroke-miterlimit="10"
-    stroke-width="20"
+    stroke-width="24"
   /><g
-    stroke-width="12"
+    stroke-width="16"
     :stroke="stroke"
     fill="none"
     stroke-miterlimit="10"

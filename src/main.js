@@ -11,6 +11,11 @@ Vue.config.productionTip = false;
 
 let app;
 auth.onAuthStateChanged(user => {
+  if (user) {
+    store.commit('setCurrentUser', user);
+    store.dispatch('fetchUserProfile');
+  }
+
   if (!app) {
     app = new Vue({
       router,
