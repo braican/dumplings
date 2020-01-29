@@ -1,0 +1,33 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:800|Source+Sans+Pro&display=swap");
+
+body,
+button,
+input {
+  font-family: $ff--copy;
+  font-size: $fz--base;
+  line-height: $lh--base;
+  color: $c--text-color;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+}
+
+.button {
+  display: inline-block;
+  border: 4px solid $c--primary;
+  background-color: $c--primary;
+  color: $c--white;
+  border-radius: 2px;
+  padding: 0.5em 1em;
+  font-size: $fz--lg;
+
+  &:hover {
+    background-color: $c--white;
+    color: $c--primary;
+  }
+}

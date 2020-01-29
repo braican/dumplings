@@ -1,22 +1,50 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './views/Home.vue';
+import firebase from 'firebase/app';
+
+import Home from './views/Home';
+import Dashboard from './views/Dashboard';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: 'history',
-  base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: Home,
+      path: '*',
+      redirect: '/dashboard',
     },
     {
-      path: '/about',
-      name: 'about',
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
+      path: '/',
+      name: 'Home',
+      component: Home,
+      meta: {
+        requiresAnon: true,
+      },
+    },
+    {
+      path: '/dashboard',
+      name: 'Dashboard',
+      component: Dashboard,
+      meta: {
+        requiresAuth: true,
+      },
     },
   ],
 });
+
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(({ meta }) => meta.requiresAuth);
+  const requiresAnon = to.matched.some(({ meta }) => meta.requiresAnon);
+  const { currentUser } = firebase.auth();
+
+  if (requiresAuth && !currentUser) {
+    next('/');
+  } else if (requiresAnon && currentUser) {
+    next('/dashboard');
+  } else {
+    next();
+  }
+});
+
+export default router;

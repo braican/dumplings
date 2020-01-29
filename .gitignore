@@ -4,6 +4,7 @@ node_modules
 
 # Hosting
 .firebase
+src/firebase.config.js
 
 # local env files
 .env.local

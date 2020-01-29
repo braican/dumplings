@@ -2,5 +2,30 @@
 // -----------
 
 $c--white: #ffffff;
+$c--gray-3: #333333;
 $c--pink: #ff0051;
+
 $c--primary: $c--pink;
+$c--text-color: $c--gray-3;
+
+// Fonts
+// -----------
+
+$ff--source-sans-pro: "Source Sans Pro", sans-serif;
+$ff--poppins: "Poppins", sans-serif;
+
+$ff--headline: $ff--poppins;
+$ff--copy: $ff--source-sans-pro;
+
+// Font size
+$fz--base: 16px;
+$fz--lg: 1.4rem;
+
+// Line height
+$lh--base: 1.4;
+$lh--sm: 1.1;
+
+// Spacing
+// -----------
+
+$spacing: 2rem;
