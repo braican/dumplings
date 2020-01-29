@@ -1,6 +1,6 @@
 <template>
-  <div class="dashboard">
-    <h1>This is only shown to logged in users</h1>
+  <div class="feed">
+    <h1>The feed of dumplings</h1>
     <button @click="logout">
       Log out
     </button>
@@ -11,7 +11,7 @@
 import { auth } from '@/firebase';
 
 export default {
-  name: 'Dashboard',
+  name: 'Feed',
   methods: {
     logout() {
       auth.signOut().then(() => {

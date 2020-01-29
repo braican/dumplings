@@ -17,8 +17,8 @@ export default new Vuex.Store({
           let userData = res.data();
 
           if (!res.exists) {
-            const { displayName, photoURL, email, uid } = state.currentUser;
-            userData = { displayName, photoURL, email };
+            const { displayName, photoURL, uid } = state.currentUser;
+            userData = { displayName, photoURL };
             usersCollection.doc(uid).set(userData, { merge: true });
           }
 

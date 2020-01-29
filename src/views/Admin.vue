@@ -40,18 +40,19 @@ import { Loader as GoogleMapsLoader } from 'google-maps';
 import { mapsApiKey } from '@/config';
 import { restaurantsCollection, dumplingsCollection } from '@/firebase';
 
-const getLatLng = ({ maps }, address) => new Promise((resolve, reject) => {
-  const geocoder = new maps.Geocoder();
-  geocoder.geocode({ address }, (results, status) => {
-    if (status !== 'OK' || !results[0]) {
-      console.error('Geocode was not successful.', status);
-      reject(status);
-    }
+const getLatLng = ({ maps }, address) =>
+  new Promise((resolve, reject) => {
+    const geocoder = new maps.Geocoder();
+    geocoder.geocode({ address }, (results, status) => {
+      if (status !== 'OK' || !results[0]) {
+        console.error('Geocode was not successful.', status);
+        reject(status);
+      }
 
-    const latLng = results[0].geometry.location.toJSON();
-    resolve(latLng);
+      const latLng = results[0].geometry.location.toJSON();
+      resolve(latLng);
+    });
   });
-});
 
 export default {
   name: 'Admin',
@@ -77,17 +78,21 @@ export default {
       }
 
       getLatLng(this.google, this.address)
-        .then(({ lat, lng }) => restaurantsCollection.add({
-          name: this.restaurant,
-          address: this.address,
-          geopoint: new firebase.firestore.GeoPoint(lat, lng),
-        }))
-        .then(restaurantRef => dumplingsCollection.add({
-          description: this.description,
-          restaurant: restaurantRef,
-        }))
+        .then(({ lat, lng }) =>
+          restaurantsCollection.add({
+            name: this.restaurant,
+            address: this.address,
+            geopoint: new firebase.firestore.GeoPoint(lat, lng),
+          })
+        )
+        .then(restaurantRef =>
+          dumplingsCollection.add({
+            description: this.description,
+            restaurant: restaurantRef,
+          })
+        )
         .then(() => {
-          console.log('Added');
+          console.log("Added"); // eslint-disable-line
           this.restaurant = '';
           this.address = '';
           this.description = '';
@@ -98,12 +103,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .new-dumpling {
   padding: 8vw;
 }
 
-input, textarea {
+input,
+textarea {
   width: 100%;
   display: block;
   border: 1px solid #999;

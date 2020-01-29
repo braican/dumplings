@@ -1,9 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import firebase from 'firebase/app';
+import { adminEmail } from './config';
 
 import Home from './views/Home';
-import Dashboard from './views/Dashboard';
+import Feed from './views/Feed';
 import Admin from './views/Admin';
 
 Vue.use(Router);
@@ -13,7 +14,7 @@ const router = new Router({
   routes: [
     {
       path: '*',
-      redirect: '/dashboard',
+      redirect: '/',
     },
     {
       path: '/',
@@ -24,19 +25,28 @@ const router = new Router({
       },
     },
     {
-      path: '/dashboard',
-      name: 'Dashboard',
-      component: Dashboard,
+      path: '/feed',
+      name: 'Feed',
+      component: Feed,
       meta: {
         requiresAuth: true,
       },
     },
     {
+      path: '/feed',
+      name: 'Feed',
+      component: Feed,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+
+    {
       path: '/admin',
       name: 'Admin',
       component: Admin,
       meta: {
-        requiresAuth: true,
+        requiresAdmin: true,
       },
     },
   ],
@@ -45,12 +55,15 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(({ meta }) => meta.requiresAuth);
   const requiresAnon = to.matched.some(({ meta }) => meta.requiresAnon);
+  const requiresAdmin = to.matched.some(({ meta }) => meta.requiresAdmin);
   const { currentUser } = firebase.auth();
 
-  if (requiresAuth && !currentUser) {
+  if (requiresAdmin && (!currentUser || currentUser.email !== adminEmail)) {
+    next('/feed');
+  } else if (requiresAuth && !currentUser) {
     next('/');
   } else if (requiresAnon && currentUser) {
-    next('/dashboard');
+    next('/feed');
   } else {
     next();
   }
