@@ -3,6 +3,7 @@
 
 $c--white: #ffffff;
 $c--gray-3: #333333;
+$c--black: $c--gray-3;
 $c--pink: #ff0051;
 
 $c--primary: $c--pink;
@@ -19,11 +20,16 @@ $ff--signika: "Signika", sans-serif;
 
 $ff--headline: $ff--poppins;
 // $ff--copy: $ff--source-sans-pro;
-$ff--copy: $ff--signika;
+$ff--copy: $ff--signika-negative;
 
 // Font size
 $fz--base: 16px;
+$fz--sm: 0.7rem;
 $fz--lg: 1.4rem;
+
+// Font weight
+$fw--base: 400;
+$fw--bold: 700;
 
 // Line height
 $lh--base: 1.4;

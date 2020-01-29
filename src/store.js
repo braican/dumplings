@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import { usersCollection } from '@/firebase';
+import { usersCollection, auth } from '@/firebase';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
     currentUser: null,
     userProfile: {},
@@ -26,6 +26,10 @@ export default new Vuex.Store({
         })
         .catch(err => console.error(err));
     },
+    logout({ commit }) {
+      commit('setCurrentUser', null);
+      commit('setUserProfile', {});
+    },
   },
   mutations: {
     setCurrentUser(state, val) {
@@ -36,3 +40,15 @@ export default new Vuex.Store({
     },
   },
 });
+
+
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    return;
+  }
+
+  store.commit('setCurrentUser', user);
+  store.dispatch('fetchUserProfile');
+});
+
+export default store;

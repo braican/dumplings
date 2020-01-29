@@ -13,8 +13,8 @@ export default {
     login() {
       auth.signInWithPopup(authProvider)
         .then(({ user }) => {
-          this.$store.commit('setCurrentUser', user);
-          this.$store.dispatch('fetchUserProfile');
+          // this.$store.commit('setCurrentUser', user);
+          // this.$store.dispatch('fetchUserProfile');
           this.$router.push('/feed');
         })
         .catch(err => console.error(err));

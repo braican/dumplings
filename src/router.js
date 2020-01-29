@@ -5,6 +5,7 @@ import { adminEmail } from './config';
 
 import Home from './views/Home';
 import Feed from './views/Feed';
+import Dumplings from './views/Dumplings';
 import Admin from './views/Admin';
 
 Vue.use(Router);
@@ -33,9 +34,9 @@ const router = new Router({
       },
     },
     {
-      path: '/feed',
-      name: 'Feed',
-      component: Feed,
+      path: '/dumplings',
+      name: 'Dumplings',
+      component: Dumplings,
       meta: {
         requiresAuth: true,
       },

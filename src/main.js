@@ -10,12 +10,7 @@ import './styles/globals.scss';
 Vue.config.productionTip = false;
 
 let app;
-auth.onAuthStateChanged(user => {
-  if (user) {
-    store.commit('setCurrentUser', user);
-    store.dispatch('fetchUserProfile');
-  }
-
+auth.onAuthStateChanged(() => {
   if (!app) {
     app = new Vue({
       router,
