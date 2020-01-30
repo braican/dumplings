@@ -27,7 +27,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/abstracts';
+@import '@/styles/_abstracts.scss';
 
 .home {
   padding: 6vw 10vw;

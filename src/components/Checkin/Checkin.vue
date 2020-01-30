@@ -1,20 +1,18 @@
 <template>
-  <div class="checkin">
+  <div :class="['checkin', commenting && 'checkin--commenting']">
     <div class="meta">
       <div class="avatar">
         <img :src="checkin.photo" :alt="`Avatar for ${checkin.userName}`">
       </div>
 
       <p class="user-name">
-        <!-- @TODO remove this -->
-        {{ checkin.uid === '2ttxiXlUYVZkl8bd56ErrmQiTUL2' ? 'Google nick' : checkin.userName }}
-
-        <!-- {{ checkin.userName }} -->
+        {{ checkin.userName }}
       </p>
       <p class="timestamp">
         {{ checkin.createdOn | formatDate }}
       </p>
     </div>
+
     <div class="restaurant">
       <button class="expand-button" @click="() => expanded = !expanded">
         <span class="restaurant__name">{{ checkin.restaurant }}</span>
@@ -28,31 +26,25 @@
       </p>
     </div>
 
-
     <p class="note">
       {{ checkin.note }}
     </p>
 
-    <div class="rating">
-      <span class="rating__number">{{ checkin.rating }}</span>
-      <span
-        v-for="n in 5"
-        :key="n"
-        :class="['dumpling-icon', checkin.rating < n ? 'dumpling-icon--disabled' : 'dumpling-icon--filled']"
-      >
-        <DumplingIcon :stroke="checkin.rating < n ? '#ccc' : '#ff0051'" />
-      </span>
-    </div>
+    <Rating :rating="checkin.rating" />
+
+    <Comments @openCommentForm="openCommentForm" />
   </div>
 </template>
 
 <script>
 import moment from 'moment';
-import DumplingIcon from '@/svg/dumplings';
+import Rating from './Rating';
+import Comments from './Comments';
+
 
 export default {
   name: 'Checkin',
-  components: { DumplingIcon },
+  components: { Rating, Comments },
   filters: {
     formatDate(val) {
       if (!val) {
@@ -71,13 +63,21 @@ export default {
   data() {
     return {
       expanded: false,
+      commenting: false,
     };
+  },
+  methods: {
+    openCommentForm() {
+      console.log('test');
+
+      this.commenting = true;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-@import '../styles/abstracts';
+@import '@/styles/_abstracts.scss';
 
 .checkin {
   position: relative;
@@ -91,9 +91,17 @@ export default {
     position: absolute;
     left: $spacing;
     right: $spacing;
-    top: 0;
+    bottom: 0;
     height: 1px;
     background-color: $c--gray-e;
+  }
+
+  &--commenting {
+    background-color: $c--gray-f;
+
+    &:after {
+      content: none;
+    }
   }
 }
 
@@ -126,13 +134,11 @@ export default {
 }
 
 .restaurant {
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-top: $spacing--sm;
+  margin-bottom: $spacing--sm;
 
-  .expand-button {
-    &:focus {
-      outline: none;
-    }
+  .expand-button:focus {
+    outline: none;
   }
 
   .restaurant__name {
@@ -179,7 +185,7 @@ export default {
 }
 
 .dumpling__description {
-  padding: 1em;
+  padding: $spacing--sm;
   background-color: $c--gray-f;
   margin-top: 8px;
   color: $c--gray-6;
@@ -193,32 +199,6 @@ export default {
     color: $c--gray-9;
     font-size: $fz--xs;
     margin-bottom: .5em;
-  }
-}
-
-.rating {
-  margin-top: $spacing--sm;
-
-  > span {
-    vertical-align: middle;
-  }
-}
-
-.rating__number {
-  font-size: $fz--lg;
-  color: $c--primary;
-  font-family: $ff--headline;
-  margin-right: $spacing--sm;
-}
-
-.dumpling-icon {
-  display: inline-block;
-  width: 20px;
-  margin-left: 8px;
-
-  svg {
-    display: block;
-    width: 100%;
   }
 }
 

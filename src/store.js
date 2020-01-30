@@ -30,11 +30,6 @@ const store = new Vuex.Store({
             usersCollection.doc(uid).set(userData, { merge: true });
           }
 
-          // @TODO remove this
-          if (state.currentUser.uid === '2ttxiXlUYVZkl8bd56ErrmQiTUL2') {
-            userData.displayName = 'Google nick';
-          }
-
           commit('setUserProfile', userData);
         })
         .catch(err => console.error(err));

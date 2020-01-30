@@ -20,7 +20,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../styles/abstracts';
+@import '@/styles/_abstracts.scss';
 
 .logo {
   position: fixed;

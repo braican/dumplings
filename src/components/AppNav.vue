@@ -59,7 +59,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../styles/abstracts';
+@import '@/styles/_abstracts.scss';
 
 .mainnav {
   position: fixed;

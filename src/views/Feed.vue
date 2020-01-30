@@ -6,13 +6,17 @@
     <div v-if="checkinsLoaded">
       <button
         v-if="hiddenCheckins.length"
-        class="show-hidden-posts-button"
+        class="button button--gray show-hidden-posts-button"
         @click="showHiddenCheckins"
       >
         Click to show {{ hiddenCheckins.length }} new checkin{{ hiddenCheckins.length > 1 ? 's' : '' }}
       </button>
-      <ul v-if="checkins.length">
-        <li v-for="checkin in checkins" :key="checkin.id">
+      <ul v-if="checkins.length" class="feed">
+        <li
+          v-for="(checkin, index) in checkins"
+          :key="checkin.id"
+          :class="[index < highlightedCheckins && 'highlighted', 'checkin-list-item']"
+        >
           <Checkin :checkin="checkin" />
         </li>
       </ul>
@@ -30,23 +34,53 @@
 
 <script>
 import { mapState } from 'vuex';
-import Checkin from '@/components/Checkin';
+import Checkin from '@/components/Checkin/Checkin';
 
 export default {
   name: 'Feed',
   components: { Checkin },
+  data() {
+    return {
+      highlightedCheckins: 0,
+    };
+  },
   computed: {
     ...mapState(['checkins', 'checkinsLoaded', 'hiddenCheckins']),
   },
   methods: {
     showHiddenCheckins() {
       const newCheckinsArray = this.hiddenCheckins.concat(this.checkins);
-      const newCheckinsCount = this.hiddenCheckins.length;
-      console.log(newCheckinsCount);
 
+      this.highlightedCheckins = this.hiddenCheckins.length;
       this.$store.commit('setHiddenCheckins', null);
       this.$store.commit('setCheckins', newCheckinsArray);
+
+      setTimeout(() => {
+        this.highlightedCheckins = 0;
+      }, 30);
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+@import '@/styles/_abstracts.scss';
+
+.checkin-list-item > div {
+  @include transition(background-color, .5s);
+  background-color: $c--white;
+}
+.checkin-list-item.highlighted > div {
+  background-color: $c--highlight;
+}
+
+.feed > li:last-child > div:after {
+  content: none;
+}
+
+.show-hidden-posts-button {
+  width: 100%;
+  text-align: center;
+  margin-bottom: $spacing--sm;
+}
+</style>

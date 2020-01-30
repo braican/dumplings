@@ -41,6 +41,12 @@ input {
   &--big {
     font-size: $fz--lg;
   }
+
+  &--gray {
+    background-color: $c--gray-e;
+    color: $c--black;
+    border-color: $c--gray-e;
+  }
 }
 
 .section-header {

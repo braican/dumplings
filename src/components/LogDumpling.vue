@@ -35,7 +35,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../styles/abstracts';
+@import '@/styles/_abstracts.scss';
 
 .log-dumpling-modal {
   position: fixed;

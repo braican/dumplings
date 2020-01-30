@@ -20,7 +20,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/abstracts';
+@import '@/styles/_abstracts.scss';
 
 .navicon {
   display: block;
