@@ -23,11 +23,13 @@ export default {
 @import '../styles/abstracts';
 
 .logo {
-  display: inline-block;
-  vertical-align: middle;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
   background-color: $c--primary;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   padding: 6px;
 
   svg {
@@ -40,9 +42,11 @@ export default {
 .headline {
   display: inline-block;
   vertical-align: middle;
-  margin-left: $spacing--sm;
+  margin-left: 38px;
+  margin-left: calc(#{$spacing--sm} + 44px);
   color: $c--primary;
   font-family: $ff--headline;
+  line-height: 44px;;
 }
 
 </style>

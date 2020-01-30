@@ -30,7 +30,6 @@ export default {
 @import '../styles/abstracts';
 
 .home {
-  box-sizing: border-box;
   padding: 6vw 10vw;
   min-height: 100vh;
   display: flex;

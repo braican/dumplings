@@ -1,12 +1,17 @@
 <template>
-  <div id="app">
-    <AppHeader v-if="currentUser !== null" />
+  <div
+    id="app"
+    :class="[loggingDumpling && 'logging-dumpling', 'app-frame']"
+  >
+    <AppHeader v-if="isAuth" />
 
-    <main :class="['main', currentUser !== null && 'main--logged-in']">
+    <main :class="['main', isAuth && 'main--logged-in']">
       <router-view />
     </main>
 
-    <AppNav v-if="currentUser !== null" />
+    <AppNav v-if="isAuth" />
+
+    <LogDumpling v-if="isAuth && loggingDumpling" />
   </div>
 </template>
 
@@ -14,18 +19,27 @@
 import { mapState } from 'vuex';
 import AppHeader from '@/components/AppHeader';
 import AppNav from '@/components/AppNav';
+import LogDumpling from '@/components/LogDumpling';
 
 export default {
   name: 'App',
-  components: { AppHeader, AppNav },
+  components: { AppHeader, AppNav, LogDumpling },
   computed: {
-    ...mapState(['currentUser']),
+    ...mapState(['currentUser', 'loggingDumpling']),
+    isAuth() {
+      return this.currentUser !== null;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 @import './styles/abstracts';
+
+.app-frame {
+  height: 100vh;
+  overflow: auto;
+}
 
 .main {
   display: block;
@@ -34,4 +48,5 @@ export default {
     padding: $spacing;
   }
 }
+
 </style>

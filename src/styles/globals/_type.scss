@@ -28,10 +28,13 @@ button {
   color: $c--white;
   border-radius: 6px;
   padding: 0.33em 1em;
-  font-size: $fz--lg;
 
   &:hover {
     background-color: $c--white;
     color: $c--primary;
+  }
+
+  &--big {
+    font-size: $fz--lg;
   }
 }

@@ -12,6 +12,9 @@ const store = new Vuex.Store({
     userProfile: {},
     checkins: [],
     dumplings: {},
+
+    loggingDumpling: false,
+    // loggingDumpling: true,
   },
   actions: {
     fetchUserProfile({ commit, state }) {
@@ -50,7 +53,7 @@ const store = new Vuex.Store({
             const { restaurant, description } = doc.data();
 
             if (dumplingMap[restaurant]) {
-              dumplingMap[restaurant].dumplings.push({ id: doc.id, description });
+              dumplingMap[restaurant].dumplings.push({ id: doc.id, description, restaurant });
             }
           });
 
@@ -68,6 +71,13 @@ const store = new Vuex.Store({
       commit('setUserProfile', {});
       commit('setCheckins', []);
     },
+
+    startLoggingDumpling({ commit }) {
+      commit('setLoggingDumpling', true);
+    },
+    closeLoggingDumpling({ commit }) {
+      commit('setLoggingDumpling', false);
+    },
   },
   mutations: {
     setCurrentUser(state, val) {
@@ -81,6 +91,9 @@ const store = new Vuex.Store({
     },
     setDumplings(state, val) {
       state.dumplings = val;
+    },
+    setLoggingDumpling(state, val) {
+      state.loggingDumpling = val;
     },
   },
 });

@@ -23,7 +23,7 @@
       </li>
     </ul>
 
-    <button class="log-dumpling">
+    <button class="log-dumpling" @click="logDumpling">
       <span class="label">Eat</span>
       <div class="icon">
         <IconPlus />
@@ -53,6 +53,9 @@ export default {
         this.$store.dispatch('logout');
         this.$router.replace('/');
       });
+    },
+    logDumpling() {
+      this.$store.dispatch('startLoggingDumpling');
     },
   },
 };
@@ -99,7 +102,6 @@ export default {
 
   .icon {
     display: inline-block;
-    box-sizing: border-box;
     width: 52px;
     height: 52px;
     background-color: $c--primary;

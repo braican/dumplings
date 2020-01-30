@@ -103,10 +103,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.new-dumpling {
-  padding: 8vw;
-}
-
 input,
 textarea {
   width: 100%;
