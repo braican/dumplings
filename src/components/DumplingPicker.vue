@@ -1,15 +1,26 @@
 <template>
   <div class="dumpling-picker">
-    <h3 class="headline">
-      Check in a dumpling
-    </h3>
+    <header class="log-modal-header">
+      <h3 class="section-header section-header--color">
+        Check in a dumpling
+      </h3>
+
+      <button
+        type="button"
+        class="cancel"
+        @click="cancel"
+      >
+        Cancel
+      </button>
+    </header>
 
     <input
       ref="search"
-      v-model="search"
+      :value="search"
       type="text"
       placeholder="Search"
       class="dumpling-input"
+      @input="event => search = event.target.value"
     >
 
     <div class="dumpling-list">
@@ -28,7 +39,7 @@
             <p class="restaurant__name">
               {{ entry.name }}
             </p>
-            <p class="restaurant__address">
+            <p class="meta-info">
               {{ entry.address }}
             </p>
           </button>
@@ -40,7 +51,7 @@
             <p class="restaurant__name">
               {{ entry.name }}
             </p>
-            <p class="restaurant__address">
+            <p class="meta-info">
               {{ entry.address }}
             </p>
 
@@ -103,8 +114,8 @@ export default {
     this.$refs.search.focus();
   },
   methods: {
-    expand() {
-
+    cancel() {
+      this.$store.dispatch('closeLoggingDumpling');
     },
   },
 };
@@ -113,11 +124,9 @@ export default {
 <style lang="scss" scoped>
 @import '../styles/abstracts';
 
-.headline {
-  font-family: $ff--headline;
-  font-size: $fz--lg;
-  color: $c--primary;
-  margin-bottom: $spacing;
+.cancel {
+  font-size: $fz--sm;
+  margin-left: $spacing;
 }
 
 .dumpling-picker {
@@ -130,11 +139,13 @@ export default {
   width: 100%;
   padding: $spacing--sm;
   font-size: $fz--lg;
+  border-color: $c--gray-9;
 
   &:focus {
     outline: 2px solid $c--primary;
   }
 }
+
 .dumpling-list {
   flex: 1;
   overflow: auto;
@@ -161,11 +172,6 @@ export default {
 
 .restaurant__name {
   font-weight: $fw--bold;
-}
-
-.restaurant__address {
-  color: $c--gray-9;
-  font-size: $fz--sm;
 }
 
 .multi-dumplings {

@@ -35,7 +35,7 @@ export default {
 }
 
 .icon {
-  width: 28px;
+  width: 24px;
   display: block;
   margin: auto;
 

@@ -15,12 +15,13 @@
           </NavIcon>
         </router-link>
       </li>
-
-      <!-- <li>
-        <button @click="logout">
-          Bye
-        </button>
-      </li> -->
+      <li>
+        <router-link to="/user" class="navlink">
+          <NavIcon :icon="iconUser">
+            Me
+          </NavIcon>
+        </router-link>
+      </li>
     </ul>
 
     <button class="log-dumpling" @click="logDumpling">
@@ -33,19 +34,23 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { auth } from '@/firebase';
 import NavIcon from '@/components/NavIcon';
 
 import IconHome from '@/svg/iconHome';
 import IconList from '@/svg/iconList';
+import IconUser from '@/svg/iconUser';
 import IconPlus from '@/svg/iconPlus';
 
 export default {
   name: 'AppNav',
   components: { NavIcon, IconPlus },
   computed: {
+    ...mapState(['userProfile']),
     iconHome: () => IconHome,
     iconList: () => IconList,
+    iconUser: () => IconUser,
   },
   methods: {
     logout() {
@@ -64,17 +69,14 @@ export default {
 <style lang="scss" scoped>
 @import '../styles/abstracts';
 
-.appnav {
+.mainnav {
   position: fixed;
-  right: 0;
-  bottom: $spacing;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
+  bottom: 0;
+  left: 0;
 
-.mainnav li {
-  margin-bottom: $spacing--sm;
+   li {
+     margin-bottom: $spacing--sm;
+   }
 }
 
 .navlink {
@@ -83,10 +85,8 @@ export default {
   display: block;
   text-align: center;
   padding: 8px .6rem;
-  border-radius: 4px 0 0 4px;
   margin: auto;
   background-color: $c--white;
-  box-shadow: 0 0 4px rgba($c--black, .3);
 
   &.router-link-active {
     background-color: $c--primary;
@@ -94,7 +94,9 @@ export default {
 }
 
 .log-dumpling {
-  padding-right: $spacing--sm;
+  position: fixed;
+  right: $spacing--sm;
+  bottom: $spacing;
 
   .label {
     @include label;
@@ -102,8 +104,8 @@ export default {
 
   .icon {
     display: inline-block;
-    width: 52px;
-    height: 52px;
+    width: 58px;
+    height: 58px;
     background-color: $c--primary;
     border-radius: 100%;
     padding: 10px;

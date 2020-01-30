@@ -20,6 +20,10 @@ button {
   background-color: transparent;
 }
 
+input {
+  border-style: solid;
+}
+
 .button {
   @include transition;
   display: inline-block;
@@ -37,4 +41,19 @@ button {
   &--big {
     font-size: $fz--lg;
   }
+}
+
+.section-header {
+  font-family: $ff--headline;
+  font-size: $fz--lg;
+  line-height: $lh--sm;
+
+  &--color {
+    color: $c--primary;
+  }
+}
+
+.meta-info {
+  font-size: $fz--sm;
+  color: $c--gray-9;
 }

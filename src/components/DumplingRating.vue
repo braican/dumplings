@@ -1,49 +1,77 @@
 <template>
-  <div class="dumpling-rating">
-    <h6 class="restaurant__name">
-      {{ restaurantName }}
-    </h6>
+  <form class="dumpling-rating" @submit="submit">
+    <header class="log-modal-header">
+      <h6 class="section-header section-header--color">
+        {{ restaurantName }}
+      </h6>
+      <button
+        class="back-button"
+        type="button"
+        @click="$emit('back')"
+      >
+        <BackArrowIcon />
+        <span>Back</span>
+      </button>
+    </header>
+
     <p class="dumpling__description">
       {{ dumpling.description }}
     </p>
 
-    <p class="your-rating">
-      <span class="label">Your rating:</span>&nbsp;&nbsp;<span class="rating">{{ rating }}</span>
+    <div class="controls">
+      <p class="your-rating">
+        <span class="label">Your rating:</span>&nbsp;&nbsp;<span class="rating">{{ rating }}</span>
 
-      <span
-        v-for="n in rating"
-        :key="n"
-        class="dumpling-icon"
+        <span
+          v-for="n in rating"
+          :key="n"
+          class="dumpling-icon"
+        >
+          <DumplingIcon />
+        </span>
+      </p>
+
+      <input
+        v-model.number="rating"
+        type="range"
+        min="1"
+        max="5"
+        value="0"
+        class="rating-input"
       >
-        <DumplingIcon />
-      </span>
-    </p>
 
-    <input
-      v-model.number="rating"
-      type="range"
-      min="1"
-      max="5"
-      value="0"
-      class="rating-input"
-    >
+      <textarea
+        v-model="note"
+        class="dumpling__notes"
+        placeholder="Dumpling notes..."
+        rows="3"
+      />
+    </div>
 
-    <textarea
-      v-model="note"
-      class="dumpling__notes"
-      placeholder="Dumpling notes..."
-      rows="3"
-    />
-  </div>
+    <div class="actions">
+      <button
+        v-if="!loading"
+        class="button check-in-button"
+        type="submit"
+      >
+        Check in
+      </button>
+      <p v-else>
+        Saving your checkin...
+      </p>
+    </div>
+  </form>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import { checkinsCollection } from '@/firebase';
 import DumplingIcon from '@/svg/dumplings';
+import BackArrowIcon from '@/svg/iconBackArrow';
 
 export default {
   name: 'DumplingRating',
-  components: { DumplingIcon },
+  components: { DumplingIcon, BackArrowIcon },
   props: {
     dumpling: {
       type: Object,
@@ -52,12 +80,13 @@ export default {
   },
   data() {
     return {
-      rating: 1,
+      rating: 3,
       note: '',
+      loading: false,
     };
   },
   computed: {
-    ...mapState(['dumplings']),
+    ...mapState(['dumplings', 'currentUser', 'userProfile']),
     restaurantName() {
       const restaurantId = this.dumpling.restaurant;
       if (!this.dumplings[restaurantId]) {
@@ -75,19 +104,59 @@ export default {
       this.$emit('note', this.note);
     },
   },
+
+  methods: {
+    submit(event) {
+      event.preventDefault();
+      const { currentUser, userProfile, note, rating, dumpling, dumplings } = this;
+
+      this.loading = true;
+
+      const checkinData = {
+        createdOn: new Date(),
+        user: currentUser.uid,
+        photo: userProfile.photoURL,
+        userName: userProfile.displayName,
+        dumpling: dumpling.id,
+        description: dumpling.description,
+        restaurant: dumplings[dumpling.restaurant].name,
+        note,
+        rating,
+      };
+
+      checkinsCollection.add(checkinData)
+        .then(() => {
+          console.log('STATUS: Checkin created successfully.'); // eslint-disable-line
+          this.loading = false;
+          this.close();
+        });
+    },
+    close() {
+      this.$store.dispatch('closeLoggingDumpling');
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 @import '../styles/abstracts';
 
-.restaurant__name {
-  font-family: $ff--headline;
-  margin-bottom: .5em;
+.back-button {
+  display: flex;
+  align-items: center;
+  margin-left: $spacing;
+
+  svg {
+    width: 20px;
+  }
+  span {
+    display: inline-block;
+    margin-left: 3px;
+    font-size: $fz--sm;
+  }
 }
 
 .dumpling__description {
-  font-size: $fz--sm;
   max-height: 156px;
   overflow: hidden;
 }
@@ -101,6 +170,7 @@ export default {
   margin-bottom: $spacing--sm;
   display: flex;
   align-items: center;
+  padding-right: 8px;
 
   .label {
     text-transform: uppercase;
@@ -131,7 +201,7 @@ export default {
 
 .dumpling__notes {
   margin-top: $spacing;
-  width: 98%;
+  width: 100%;
   resize: none;
   padding: .5em;
   border-color: $c--gray-e;
@@ -140,6 +210,13 @@ export default {
   &:focus {
     outline: 2px solid $c--primary;
   }
+}
+
+.actions {
+  margin-top: $spacing--sm;
+}
+.check-in-button {
+  width: 100%;
 }
 
 </style>

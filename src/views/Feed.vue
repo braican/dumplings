@@ -1,6 +1,8 @@
 <template>
   <div class="feed">
-    <h2 class="headline">The dumpling action</h2>
+    <h2 class="section-header">
+      The dumpling action
+    </h2>
     <div v-if="checkinsLoaded">
       <ul v-if="checkins.length">
         <li v-for="checkin in checkins" :key="checkin.id">
@@ -35,8 +37,7 @@ export default {
 <style lang="scss" scoped>
 @import '../styles/abstracts';
 
-.headline {
-  font-family: $ff--headline;
+.section-header {
   position: relative;
   padding-bottom: $spacing--sm;
   margin-bottom: $spacing--sm;

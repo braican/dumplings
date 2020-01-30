@@ -7,6 +7,7 @@ import Home from './views/Home';
 import Feed from './views/Feed';
 import Dumplings from './views/Dumplings';
 import Admin from './views/Admin';
+import User from './views/User';
 
 Vue.use(Router);
 
@@ -37,6 +38,14 @@ const router = new Router({
       path: '/dumplings',
       name: 'Dumplings',
       component: Dumplings,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/user',
+      name: 'User',
+      component: User,
       meta: {
         requiresAuth: true,
       },

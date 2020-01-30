@@ -41,13 +41,16 @@ export default {
 }
 
 .headline {
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 38px;
-  margin-left: calc(#{$spacing--sm} + 44px);
+  position: fixed;
+  left: 22px;
+  top: 100vh;
+  padding-right: 60px;
+  text-align: right;
+  width: 100vh;
+  transform: rotate(-90deg) translateY(-50%);
+  transform-origin: 0 0;
   color: $c--primary;
   font-family: $ff--headline;
-  line-height: 44px;;
 }
 
 </style>

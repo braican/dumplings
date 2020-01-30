@@ -1,9 +1,9 @@
 <template>
   <div class="restaurant">
-    <h6 class="restaurant__name">
+    <h6 class="section-header">
       {{ restaurant.name }}
     </h6>
-    <p class="restaurant__address">
+    <p class="meta-info restaurant__address">
       {{ restaurant.address }}
     </p>
 
@@ -48,16 +48,9 @@ export default {
   margin-bottom: $spacing;
 }
 
-.restaurant__name {
-  font-family: $ff--headline;
-  font-size: $fz--lg;
-  line-height: $lh--sm;
-}
 .restaurant__address {
   margin-top: .5em;
-  margin-bottom: 1em;
-  font-size: $fz--sm;
-  color: $c--gray-9;
+  margin-bottom: $spacing--sm;
 }
 
 </style>
