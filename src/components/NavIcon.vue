@@ -1,9 +1,9 @@
 <template>
   <span class="navicon">
-    <span class="label"><slot /></span>
     <span class="icon">
       <component :is="icon" />
     </span>
+    <span class="label"><slot /></span>
   </span>
 </template>
 
@@ -27,7 +27,13 @@ export default {
 }
 
 .label {
-  @include label;
+  display: block;
+  color: $c--primary;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: $fz--xs;
+  font-weight: $fw--bold;
+  margin-top: 4px;
 
   .router-link-active & {
     color: $c--white;

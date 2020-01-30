@@ -25,7 +25,6 @@
     </ul>
 
     <button class="log-dumpling" @click="logDumpling">
-      <span class="label">Eat</span>
       <div class="icon">
         <IconPlus />
       </div>
@@ -35,7 +34,6 @@
 
 <script>
 import { mapState } from 'vuex';
-import { auth } from '@/firebase';
 import NavIcon from '@/components/NavIcon';
 
 import IconHome from '@/svg/iconHome';
@@ -53,12 +51,6 @@ export default {
     iconUser: () => IconUser,
   },
   methods: {
-    logout() {
-      auth.signOut().then(() => {
-        this.$store.dispatch('logout');
-        this.$router.replace('/');
-      });
-    },
     logDumpling() {
       this.$store.dispatch('startLoggingDumpling');
     },
@@ -73,9 +65,16 @@ export default {
   position: fixed;
   bottom: 0;
   left: 0;
+  right: 0;
+  background-color: $c--white;
+  z-index: 2;
+  display: flex;
+  box-shadow: 0 7px 12px $c--black;
+  padding-right: 90px;
+  padding-right: calc(58px + #{$spacing--sm * 2});
 
    li {
-     margin-bottom: $spacing--sm;
+    flex: 1;
    }
 }
 
@@ -95,27 +94,21 @@ export default {
 
 .log-dumpling {
   position: fixed;
+  z-index: 3;
   right: $spacing--sm;
   bottom: $spacing;
+  display: inline-block;
+  width: 58px;
+  height: 58px;
+  background-color: $c--primary;
+  border-radius: 100%;
+  padding: 10px;
+  box-shadow: 0px 0px 10px rgba($c--black, .5);
 
-  .label {
-    @include label;
-  }
-
-  .icon {
-    display: inline-block;
-    width: 58px;
-    height: 58px;
-    background-color: $c--primary;
-    border-radius: 100%;
-    padding: 10px;
-    box-shadow: 0px 0px 6px rgba($c--black, .5);
-
-    svg {
-      display: block;
-      width: 100%;
-      fill: $c--white
-    }
+  svg {
+    display: block;
+    width: 100%;
+    fill: $c--white
   }
 }
 
