@@ -114,9 +114,9 @@ export default {
 
       const checkinData = {
         createdOn: new Date(),
-        user: currentUser.uid,
-        photo: userProfile.photoURL,
+        uid: currentUser.uid,
         userName: userProfile.displayName,
+        photo: userProfile.photoURL,
         dumpling: dumpling.id,
         description: dumpling.description,
         restaurant: dumplings[dumpling.restaurant].name,

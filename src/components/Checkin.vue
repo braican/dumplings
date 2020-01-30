@@ -6,7 +6,10 @@
       </div>
 
       <p class="user-name">
-        {{ checkin.userName }}
+        <!-- @TODO remove this -->
+        {{ checkin.uid === '2ttxiXlUYVZkl8bd56ErrmQiTUL2' ? 'Google nick' : checkin.userName }}
+
+        <!-- {{ checkin.userName }} -->
       </p>
       <p class="timestamp">
         {{ checkin.createdOn | formatDate }}
@@ -31,12 +34,13 @@
     </p>
 
     <div class="rating">
+      <span class="rating__number">{{ checkin.rating }}</span>
       <span
-        v-for="n in checkin.rating"
+        v-for="n in 5"
         :key="n"
-        class="dumpling-icon"
+        :class="['dumpling-icon', checkin.rating < n ? 'dumpling-icon--disabled' : 'dumpling-icon--filled']"
       >
-        <DumplingIcon />
+        <DumplingIcon :stroke="checkin.rating < n ? '#ccc' : '#ff0051'" />
       </span>
     </div>
   </div>
@@ -87,7 +91,7 @@ export default {
     position: absolute;
     left: $spacing;
     right: $spacing;
-    bottom: 0;
+    top: 0;
     height: 1px;
     background-color: $c--gray-e;
   }
@@ -194,12 +198,23 @@ export default {
 
 .rating {
   margin-top: $spacing--sm;
+
+  > span {
+    vertical-align: middle;
+  }
+}
+
+.rating__number {
+  font-size: $fz--lg;
+  color: $c--primary;
+  font-family: $ff--headline;
+  margin-right: $spacing--sm;
 }
 
 .dumpling-icon {
   display: inline-block;
   width: 20px;
-  margin-left: 4px;
+  margin-left: 8px;
 
   svg {
     display: block;

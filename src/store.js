@@ -13,6 +13,7 @@ const store = new Vuex.Store({
     dumplings: {},
 
     checkins: [],
+    hiddenCheckins: [],
     checkinsLoaded: false,
 
     loggingDumpling: false,
@@ -27,6 +28,11 @@ const store = new Vuex.Store({
             const { displayName, photoURL, uid } = state.currentUser;
             userData = { displayName, photoURL };
             usersCollection.doc(uid).set(userData, { merge: true });
+          }
+
+          // @TODO remove this
+          if (state.currentUser.uid === '2ttxiXlUYVZkl8bd56ErrmQiTUL2') {
+            userData.displayName = 'Google nick';
           }
 
           commit('setUserProfile', userData);
@@ -91,7 +97,20 @@ const store = new Vuex.Store({
     },
     setCheckins(state, val) {
       state.checkins = val;
-      state.checkinsLoaded = true;
+      if (!state.checkinsLoaded) {
+        state.checkinsLoaded = true;
+      }
+    },
+    setHiddenCheckins(state, val) {
+      if (!val) {
+        state.hiddenCheckins = [];
+        return;
+      }
+
+      // Prevent adding dupes.
+      if (!state.hiddenCheckins.some(x => x.id === val.id)) {
+        state.hiddenCheckins.unshift(val);
+      }
     },
     setDumplings(state, val) {
       state.dumplings = val;
@@ -112,13 +131,32 @@ auth.onAuthStateChanged(user => {
   store.dispatch('fetchUserProfile');
 
   checkinsCollection.orderBy('createdOn', 'desc').onSnapshot(querySnapshot => {
-    const checkinsArray = [];
-    querySnapshot.forEach(doc => {
-      const checkin = { ...doc.data(), id: doc.id };
-      checkinsArray.push(checkin);
-    });
+    const docChanges = querySnapshot.docChanges();
 
-    store.commit('setCheckins', checkinsArray);
+    // Check if the checkin is created by the current user.
+    let createdByCurrentUser;
+    if (querySnapshot.docs.length) {
+      createdByCurrentUser = store.state.currentUser.uid === docChanges[0].doc.data().uid;
+    }
+
+    // Add new checkins to the hidden array after the initial load.
+    if (
+      (docChanges.length !== querySnapshot.docs.length)
+      && (docChanges[0].type === 'added')
+      && (!createdByCurrentUser)) {
+      const checkin = docChanges[0].doc.data();
+      checkin.id = docChanges[0].doc.id;
+
+      store.commit('setHiddenCheckins', checkin);
+    } else {
+      const checkinsArray = [];
+      querySnapshot.forEach(doc => {
+        const checkin = { ...doc.data(), id: doc.id };
+        checkinsArray.push(checkin);
+      });
+
+      store.commit('setCheckins', checkinsArray);
+    }
   });
 });
 

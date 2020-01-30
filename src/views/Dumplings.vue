@@ -1,5 +1,9 @@
 <template>
   <div class="dumplings">
+    <h2 class="section-header page-header">
+      The Dumplings of Dumpling Week
+    </h2>
+
     <ul v-if="Object.keys(dumplings).length">
       <li v-for="(entry, restaurantId) in dumplings" :key="restaurantId">
         <RestaurantListing :restaurant="entry" />

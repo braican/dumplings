@@ -40,7 +40,7 @@ export default {
   display: block;
 
   &--logged-in {
-    padding: $spacing $spacing $spacing 80px;
+    padding: $spacing $spacing $spacing * 3 80px;
   }
 }
 

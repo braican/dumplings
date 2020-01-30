@@ -53,6 +53,22 @@ input {
   }
 }
 
+.page-header {
+  position: relative;
+  padding-bottom: $spacing--sm;
+  margin-bottom: $spacing;
+
+  &:after {
+    content: "";
+    display: block;
+    width: 33%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    border-top: 2px solid $c--primary;
+  }
+}
+
 .meta-info {
   font-size: $fz--sm;
   color: $c--gray-9;
