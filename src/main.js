@@ -15,6 +15,9 @@ auth.onAuthStateChanged(() => {
     app = new Vue({
       router,
       store,
+      created() {
+        store.dispatch('fetchDumplings');
+      },
       render: h => h(App),
     }).$mount('#app');
   }

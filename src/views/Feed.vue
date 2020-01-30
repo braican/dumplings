@@ -1,23 +1,26 @@
 <template>
   <div class="feed">
     <h1>The feed of dumplings</h1>
-    <button @click="logout">
-      Log out
-    </button>
+
+    <ul v-if="checkins.length">
+      <li v-for="checkin in checkins" :key="checkin.id">
+        checkin here
+      </li>
+    </ul>
+
+    <div v-else>
+      <p>Nobody has eaten any dumplings.</p>
+    </div>
   </div>
 </template>
 
 <script>
-import { auth } from '@/firebase';
+import { mapState } from 'vuex';
 
 export default {
   name: 'Feed',
-  methods: {
-    logout() {
-      auth.signOut().then(() => {
-        this.$router.replace('/');
-      });
-    },
+  computed: {
+    ...mapState(['checkins']),
   },
 };
 </script>

@@ -1,23 +1,28 @@
 <template>
   <div class="dumplings">
-    <h1>The list of dumplings</h1>
-    <button @click="logout">
-      Log out
-    </button>
+    <ul v-if="Object.keys(dumplings).length">
+      <li v-for="(entry, restaurantId) in dumplings" :key="restaurantId">
+        <RestaurantListing :restaurant="entry" />
+      </li>
+    </ul>
+
+    <div v-else>
+      <p>No dumplings have been added to the database!</p>
+    </div>
   </div>
 </template>
 
 <script>
-import { auth } from '@/firebase';
+import { mapState } from 'vuex';
+import RestaurantListing from '@/components/RestaurantListing';
 
 export default {
   name: 'Dumplings',
-  methods: {
-    logout() {
-      auth.signOut().then(() => {
-        this.$router.replace('/');
-      });
-    },
+  components: { RestaurantListing },
+  computed: {
+    ...mapState(['dumplings']),
   },
 };
 </script>
+
+

@@ -83,13 +83,13 @@ export default {
             name: this.restaurant,
             address: this.address,
             geopoint: new firebase.firestore.GeoPoint(lat, lng),
-          })
+          }),
         )
         .then(restaurantRef =>
           dumplingsCollection.add({
             description: this.description,
-            restaurant: restaurantRef,
-          })
+            restaurant: restaurantRef.id,
+          }),
         )
         .then(() => {
           console.log("Added"); // eslint-disable-line

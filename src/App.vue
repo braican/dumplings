@@ -2,7 +2,9 @@
   <div id="app">
     <AppHeader v-if="currentUser !== null" />
 
-    <router-view />
+    <main :class="['main', currentUser !== null && 'main--logged-in']">
+      <router-view />
+    </main>
 
     <AppNav v-if="currentUser !== null" />
   </div>
@@ -22,3 +24,14 @@ export default {
 };
 </script>
 
+<style lang="scss" scoped>
+@import './styles/abstracts';
+
+.main {
+  display: block;
+
+  &--logged-in {
+    padding: $spacing;
+  }
+}
+</style>

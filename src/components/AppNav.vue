@@ -18,7 +18,7 @@
 
       <li>
         <button @click="logout">
-          Log out
+          Bye
         </button>
       </li>
     </ul>
@@ -65,19 +65,25 @@ export default {
   position: fixed;
   right: 0;
   bottom: $spacing;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .mainnav li {
-  margin-bottom: 1rem;
+  margin-bottom: $spacing--sm;
 }
 
 .navlink {
+  @include transition(background-color);
   text-decoration: none;
   display: block;
   text-align: center;
-  padding: 8px 1rem;
+  padding: 8px .6rem;
   border-radius: 4px 0 0 4px;
   margin: auto;
+  background-color: $c--white;
+  box-shadow: 0 0 4px rgba($c--black, .3);
 
   &.router-link-active {
     background-color: $c--primary;
@@ -85,7 +91,7 @@ export default {
 }
 
 .log-dumpling {
-  padding-right: 1rem;
+  padding-right: $spacing--sm;
 
   .label {
     @include label;

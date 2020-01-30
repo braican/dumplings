@@ -40,7 +40,7 @@ export default {
 .headline {
   display: inline-block;
   vertical-align: middle;
-  margin-left: $spacing;
+  margin-left: $spacing--sm;
   color: $c--primary;
   font-family: $ff--headline;
 }

@@ -2,6 +2,7 @@
 // -----------
 
 $c--white: #ffffff;
+$c--gray-9: #999999;
 $c--gray-3: #333333;
 $c--black: $c--gray-3;
 $c--pink: #ff0051;
@@ -24,7 +25,8 @@ $ff--copy: $ff--signika-negative;
 
 // Font size
 $fz--base: 16px;
-$fz--sm: 0.7rem;
+$fz--xs: 0.7rem;
+$fz--sm: 0.8rem;
 $fz--lg: 1.4rem;
 
 // Font weight
@@ -39,6 +41,7 @@ $lh--sm: 1.1;
 // -----------
 
 $spacing: 2rem;
+$spacing--sm: 1rem;
 
 // Breakpoints
 // -----------
