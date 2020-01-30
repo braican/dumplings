@@ -1,5 +1,9 @@
 <template>
   <div class="dumpling-picker">
+    <h3 class="headline">
+      Check in a dumpling
+    </h3>
+
     <input
       ref="search"
       v-model="search"
@@ -108,6 +112,13 @@ export default {
 
 <style lang="scss" scoped>
 @import '../styles/abstracts';
+
+.headline {
+  font-family: $ff--headline;
+  font-size: $fz--lg;
+  color: $c--primary;
+  margin-bottom: $spacing;
+}
 
 .dumpling-picker {
   height: 100%;

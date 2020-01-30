@@ -36,11 +36,6 @@ export default {
 <style lang="scss" scoped>
 @import './styles/abstracts';
 
-.app-frame {
-  height: 100vh;
-  overflow: auto;
-}
-
 .main {
   display: block;
 

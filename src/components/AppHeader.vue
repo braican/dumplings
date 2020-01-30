@@ -31,6 +31,7 @@ export default {
   width: 44px;
   height: 44px;
   padding: 6px;
+  z-index: 1;
 
   svg {
     display: block;

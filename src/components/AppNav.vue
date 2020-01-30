@@ -16,11 +16,11 @@
         </router-link>
       </li>
 
-      <li>
+      <!-- <li>
         <button @click="logout">
           Bye
         </button>
-      </li>
+      </li> -->
     </ul>
 
     <button class="log-dumpling" @click="logDumpling">

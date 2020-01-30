@@ -3,7 +3,9 @@
     <h6 class="restaurant__name">
       {{ restaurantName }}
     </h6>
-    <p>{{ dumpling.description }}</p>
+    <p class="dumpling__description">
+      {{ dumpling.description }}
+    </p>
 
     <p class="your-rating">
       <span class="label">Your rating:</span>&nbsp;&nbsp;<span class="rating">{{ rating }}</span>
@@ -25,6 +27,13 @@
       value="0"
       class="rating-input"
     >
+
+    <textarea
+      v-model="note"
+      class="dumpling__notes"
+      placeholder="Dumpling notes..."
+      rows="3"
+    />
   </div>
 </template>
 
@@ -44,6 +53,7 @@ export default {
   data() {
     return {
       rating: 1,
+      note: '',
     };
   },
   computed: {
@@ -59,7 +69,10 @@ export default {
   },
   watch: {
     rating() {
-      this.$emit('input', this.rating);
+      this.$emit('rating', this.rating);
+    },
+    note() {
+      this.$emit('note', this.note);
     },
   },
 };
@@ -71,6 +84,12 @@ export default {
 .restaurant__name {
   font-family: $ff--headline;
   margin-bottom: .5em;
+}
+
+.dumpling__description {
+  font-size: $fz--sm;
+  max-height: 156px;
+  overflow: hidden;
 }
 
 .rating-input {
@@ -107,6 +126,19 @@ export default {
   svg {
     display: block;
     width: 100%;
+  }
+}
+
+.dumpling__notes {
+  margin-top: $spacing;
+  width: 98%;
+  resize: none;
+  padding: .5em;
+  border-color: $c--gray-e;
+  background-color: $c--gray-f;
+
+  &:focus {
+    outline: 2px solid $c--primary;
   }
 }
 

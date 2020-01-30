@@ -10,11 +10,12 @@ const store = new Vuex.Store({
   state: {
     currentUser: null,
     userProfile: {},
-    checkins: [],
     dumplings: {},
 
+    checkins: [],
+    checkinsLoaded: false,
+
     loggingDumpling: false,
-    // loggingDumpling: true,
   },
   actions: {
     fetchUserProfile({ commit, state }) {
@@ -74,9 +75,11 @@ const store = new Vuex.Store({
 
     startLoggingDumpling({ commit }) {
       commit('setLoggingDumpling', true);
+      document.body.classList.add('fixed-scroll');
     },
     closeLoggingDumpling({ commit }) {
       commit('setLoggingDumpling', false);
+      document.body.classList.remove('fixed-scroll');
     },
   },
   mutations: {
@@ -88,6 +91,7 @@ const store = new Vuex.Store({
     },
     setCheckins(state, val) {
       state.checkins = val;
+      state.checkinsLoaded = true;
     },
     setDumplings(state, val) {
       state.dumplings = val;
