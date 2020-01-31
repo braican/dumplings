@@ -44,6 +44,10 @@ export default {
       return this.userCheckins.length;
     },
     averageRating() {
+      if (this.userCheckins.length === 0) {
+        return 0;
+      }
+
       const ratingsTotal = this.userCheckins.reduce((prev, checkin) => prev + checkin.rating, 0);
       const fullAverage = ratingsTotal / this.checkinCount;
       return (Math.round(fullAverage * 100) / 100).toFixed(1);

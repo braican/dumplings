@@ -81,6 +81,15 @@ export default {
    li {
     flex: 1;
    }
+
+   @include mq($bp--mobile) {
+     top: 0;
+     left: auto;
+     bottom: auto;
+     box-shadow: none;
+     padding-right: 0;
+     box-shadow: 0 0 20px rgba($c--black, .2);
+   }
 }
 
 .navlink {
@@ -94,6 +103,11 @@ export default {
 
   &.router-link-active {
     background-color: $c--primary;
+  }
+
+  @include mq($bp--mobile) {
+    padding-left: $spacing;
+    padding-right: $spacing;
   }
 }
 

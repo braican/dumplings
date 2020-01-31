@@ -215,6 +215,7 @@ export default {
 
 .actions {
   margin-top: $spacing--sm;
+  min-height: 48px;
 }
 .check-in-button {
   width: 100%;
