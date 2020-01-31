@@ -6,7 +6,7 @@
 
     <ul v-if="Object.keys(dumplings).length" class="dumpling-list">
       <li v-for="(entry, restaurantId) in dumplings" :key="restaurantId">
-        <RestaurantListing :restaurant="entry" />
+        <RestaurantListing :restaurant="{...entry, id: restaurantId}" />
       </li>
     </ul>
 

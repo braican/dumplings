@@ -89,3 +89,24 @@ textarea:focus {
   font-size: $fz--sm;
   color: $c--gray-9;
 }
+
+.label {
+  display: block;
+  color: $c--gray-9;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: $fz--xs;
+  font-weight: $fw--bold;
+
+  &--bottom {
+    margin-top: 4px;
+  }
+
+  &--top {
+    margin-bottom: 0.5em;
+  }
+
+  &--color {
+    color: $c--primary;
+  }
+}

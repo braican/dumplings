@@ -1,17 +1,20 @@
 <template>
   <div class="activity">
-    <h2 class="section-header">
-      Activity
-    </h2>
-
-    <ul v-if="userCheckins.length">
+    <ul v-if="userCheckins.length" class="user-checkins">
       <li v-for="checkin in userCheckins" :key="checkin.id">
         <Checkin :checkin="checkin" light />
       </li>
     </ul>
 
     <div v-else>
-      <p>Nobody has eaten any dumplings.</p>
+      <p class="messaging">
+        You haven't eaten any dumplings yet.
+        <span
+          class="emoji"
+          role="img"
+          aria-label="sad face"
+        >😢</span>
+      </p>
     </div>
   </div>
 </template>
@@ -32,8 +35,17 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/_abstracts.scss';
 
-.activity {
+.user-checkins li:last-child > div:after {
+  content: none;
+}
+
+.emoji {
+  font-size: 32px;
+}
+
+.messaging {
   margin-top: $spacing;
 }
+
 </style>
 

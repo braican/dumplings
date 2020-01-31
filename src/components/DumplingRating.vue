@@ -27,7 +27,7 @@
           :key="n"
           class="dumpling-icon"
         >
-          <DumplingIcon />
+          <DumplingIcon theme="red_outline" />
         </span>
       </p>
 
@@ -118,7 +118,7 @@ export default {
         dumpling: this.dumpling.id,
         description: this.dumpling.description,
         restaurant: this.dumplings[this.dumpling.restaurant].name,
-        commentCount: 0,
+        restaurantId: this.dumpling.restaurant,
         note: this.note,
         rating: this.rating,
       };

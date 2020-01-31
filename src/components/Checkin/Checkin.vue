@@ -15,13 +15,17 @@
 
     <div class="restaurant">
       <button class="expand-button" @click="() => expanded = !expanded">
-        <span class="restaurant__name">{{ checkin.restaurant }}</span>
+        <span class="restaurant__name">{{ checkin.restaurant }}</span>&nbsp;&nbsp;
 
-        <span :class="['expand-icon', expanded && 'expand-icon--expanded']" />
+        <ExpandIcon
+          :expanded="expanded"
+          collapsed-label="The dumpling"
+          expanded-label="The dumpling"
+        />
       </button>
 
       <p v-if="expanded" class="dumpling__description">
-        <strong>Description</strong>
+        <strong class="label label--top">Description</strong>
         {{ checkin.description }}
       </p>
     </div>
@@ -39,10 +43,11 @@
 import { mapState } from 'vuex';
 import Rating from './Rating';
 import Comments from './Comments';
+import ExpandIcon from '@/components/ExpandIcon';
 
 export default {
   name: 'Checkin',
-  components: { Rating, Comments },
+  components: { Rating, Comments, ExpandIcon },
   props: {
     checkin: {
       type: Object,
@@ -87,7 +92,7 @@ export default {
     left: $spacing;
     right: $spacing;
     bottom: 0;
-    height: 8px;
+    height: 6px;
     background-color: $c--gray-e;
   }
 
@@ -131,51 +136,19 @@ export default {
 .restaurant {
   margin-top: $spacing--sm;
   margin-bottom: $spacing--sm;
+}
 
-  .expand-button:focus {
+.restaurant__name {
+  font-family: $ff--headline;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.expand-button {
+  text-align: left;
+
+  &:focus {
     outline: none;
-  }
-
-  .restaurant__name {
-    font-family: $ff--headline;
-    display: inline-block;
-    vertical-align: middle;
-  }
-
-  .expand-icon {
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    width: 8px;
-    margin-left: $spacing--sm;
-
-    &:after,
-    &:before {
-      content: '';
-      position: absolute;
-      width: 100%;
-      height: 2px;
-      background-color: $c--black;
-      left: 0;
-      top: 50%;
-      border-radius: 4px;
-      margin-top: -2px;
-    }
-
-    &:after {
-      @include transition(transform);
-      transform-origin: center;
-      transform: rotate(90deg);
-    }
-
-    &--expanded:after {
-      transform: rotate(0deg);
-    }
-
-    svg {
-      display: block;
-      width: 100%;
-    }
   }
 }
 
@@ -185,16 +158,6 @@ export default {
   margin-top: 8px;
   color: $c--gray-6;
   font-size: $fz--sm;
-
-  strong {
-    display: block;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-weight: $fw--bold;
-    color: $c--gray-9;
-    font-size: $fz--xs;
-    margin-bottom: .5em;
-  }
 }
 
 </style>

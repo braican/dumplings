@@ -2,7 +2,7 @@
   <div class="home">
     <header class="masthead">
       <div class="logo">
-        <Logo />
+        <Logo theme="red_outline" />
       </div>
       <div class="content">
         <h1 class="headline">

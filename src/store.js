@@ -2,7 +2,15 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import Cookies from 'js-cookie';
 
-import { auth, usersCollection, checkinsCollection, restaurantsCollection, commentsCollection, dumplingsCollection } from '@/firebase';
+import {
+  auth,
+  usersCollection,
+  checkinsCollection,
+  restaurantsCollection,
+  commentsCollection,
+  dumplingsCollection,
+  starsCollection,
+} from '@/firebase';
 
 Vue.use(Vuex);
 
@@ -20,9 +28,21 @@ const store = new Vuex.Store({
 
     commenting: false,
     commentMap: {},
+
+    starsMap: {},
   },
   getters: {
     userCheckins: state => state.checkins.filter(({ uid }) => uid === state.currentUser.uid),
+    starsCount: state => Object.keys(state.starsMap).length,
+    isStarred: state => restaurantId => state.starsMap[restaurantId],
+    userCheckinsByRestaurant: (state, getters) => rid => getters.userCheckins.filter(({ restaurantId }) => restaurantId === rid),
+    starredData: state => {
+      const starredRestaurantIds = Object.keys(state.starsMap);
+      const starred =  Object.keys(state.dumplings)
+        .filter(restaurantId => starredRestaurantIds.includes(restaurantId))
+        .map(restaurantId => ({ ...state.dumplings[restaurantId], restaurantId }));
+      return starred;
+    },
   },
   actions: {
     fetchUserProfile({ commit, state }) {
@@ -125,9 +145,11 @@ const store = new Vuex.Store({
     setCommentMap(state, val) {
       state.commentMap = val;
     },
+    setStars(state, val) {
+      state.starsMap = val;
+    },
   },
 });
-
 
 auth.onAuthStateChanged(user => {
   if (!user) {
@@ -143,7 +165,7 @@ auth.onAuthStateChanged(user => {
     // Check if the checkin is created by the current user.
     let createdByCurrentUser;
     if (querySnapshot.docs.length) {
-      createdByCurrentUser = store.state.currentUser.uid === docChanges[0].doc.data().uid;
+      createdByCurrentUser = user.uid === docChanges[0].doc.data().uid;
     }
 
     // Add new checkins to the hidden array after the initial load.
@@ -182,6 +204,16 @@ auth.onAuthStateChanged(user => {
 
     store.commit('setCommentMap', commentMap);
   });
+
+  starsCollection.where('uid', '==', user.uid).onSnapshot(querySnapshot => {
+    const starsMap = {};
+    querySnapshot.forEach(doc => {
+      const { restaurant } = doc.data();
+      starsMap[restaurant] = doc.id;
+    });
+    store.commit('setStars', starsMap);
+  });
+
 });
 
 export default store;

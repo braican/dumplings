@@ -17,8 +17,15 @@
         </li>
       </ul>
 
-      <div v-else>
-        <p>Nobody has eaten any dumplings.</p>
+      <div v-else class="no-dumplings">
+        <p>
+          Nobody has eaten any dumplings yet.
+          <span
+            class="emoji"
+            role="img"
+            aria-label="sad face"
+          >😢</span>
+        </p>
       </div>
     </div>
 
@@ -72,8 +79,13 @@ export default {
   margin-top: $spacing--sm;
 }
 
-.loading {
+.loading,
+.no-dumplings {
   margin-top: $spacing;
+}
+
+.emoji {
+  font-size: 32px;
 }
 
 </style>

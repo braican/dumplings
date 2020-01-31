@@ -3,7 +3,7 @@
     <span class="icon">
       <component :is="icon" />
     </span>
-    <span class="label"><slot /></span>
+    <span class="label label--bottom label--color"><slot /></span>
   </span>
 </template>
 
@@ -26,18 +26,8 @@ export default {
   display: block;
 }
 
-.label {
-  display: block;
-  color: $c--primary;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: $fz--xs;
-  font-weight: $fw--bold;
-  margin-top: 4px;
-
-  .router-link-active & {
-    color: $c--white;
-  }
+.router-link-active .label {
+  color: $c--white;
 }
 
 .icon {

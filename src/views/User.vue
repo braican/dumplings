@@ -1,7 +1,7 @@
 <template>
   <div class="user">
     <div class="header">
-      <div class="headshot">
+      <div v-if="checkinsLoaded" class="headshot">
         <img :src="userProfile.photoURL" :alt="`Avatar for ${userProfile.displayName}`">
       </div>
       <h2 class="section-header section-header--color">
@@ -13,9 +13,29 @@
       Log out
     </button>
 
-    <Overview />
+    <div v-if="checkinsLoaded">
+      <Overview class="section" @updateView="newView => view = newView" />
 
-    <Activity />
+      <ul class="profile-nav">
+        <li>
+          <button :class="['profile-nav-button', view === 'activity' && 'profile-nav-button--active']" @click="view = 'activity'">
+            Activity
+          </button>
+        </li>
+        <li>
+          <button :class="['profile-nav-button', view === 'starred' && 'profile-nav-button--active']" @click="view = 'starred'">
+            Starred
+          </button>
+        </li>
+      </ul>
+
+      <Activity v-if="view === 'activity'" />
+      <Starred v-if="view === 'starred'" />
+    </div>
+
+    <div v-else>
+      <p>Loading...</p>
+    </div>
   </div>
 </template>
 
@@ -24,12 +44,18 @@ import { mapState } from 'vuex';
 import { auth } from '@/firebase';
 import Overview from '@/components/Profile/Overview';
 import Activity from '@/components/Profile/Activity';
+import Starred from '@/components/Profile/Starred';
 
 export default {
   name: 'User',
-  components: { Overview, Activity },
+  components: { Overview, Activity, Starred },
+  data() {
+    return {
+      view: 'activity',
+    };
+  },
   computed: {
-    ...mapState(['userProfile']),
+    ...mapState(['userProfile', 'checkinsLoaded']),
   },
   methods: {
     logout() {
@@ -67,4 +93,32 @@ export default {
   top: $spacing--sm;
   right: $spacing--sm;
 }
+
+.section {
+  margin-bottom: $spacing;
+}
+
+.profile-nav li {
+  display: inline-block;
+
+  + li {
+    margin-left: $spacing--sm;
+  }
+}
+
+.profile-nav-button {
+  font-family: $ff--headline;
+  opacity: .2;
+
+  &:focus {
+    outline: none;
+    color: $c--primary;
+  }
+
+  &--active {
+    opacity: 1;
+    font-size: $fz--lg;
+  }
+}
+
 </style>

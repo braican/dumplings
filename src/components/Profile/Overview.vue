@@ -5,14 +5,14 @@
     </h2>
 
     <div class="stats">
-      <div class="stat">
+      <button class="stat" @click="$emit('updateView', 'activity')">
         <p class="data">
           {{ checkinCount }}
         </p>
         <p class="label">
-          Dumplings checked in
+          Dumplings eaten
         </p>
-      </div>
+      </button>
       <div class="stat">
         <p class="data">
           {{ averageRating }}
@@ -21,6 +21,14 @@
           Average rating
         </p>
       </div>
+      <button class="stat" @click="$emit('updateView', 'starred')">
+        <p class="data">
+          {{ starsCount }}
+        </p>
+        <p class="label">
+          Starred dumplings
+        </p>
+      </button>
     </div>
   </div>
 </template>
@@ -31,14 +39,14 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'UserOverview',
   computed: {
-    ...mapGetters(['userCheckins']),
+    ...mapGetters(['userCheckins', 'starsCount']),
     checkinCount() {
       return this.userCheckins.length;
     },
     averageRating() {
       const ratingsTotal = this.userCheckins.reduce((prev, checkin) => prev + checkin.rating, 0);
       const fullAverage = ratingsTotal / this.checkinCount;
-      return Math.round(fullAverage * 100) / 100;
+      return (Math.round(fullAverage * 100) / 100).toFixed(1);
     },
   },
 };
@@ -55,10 +63,16 @@ export default {
   display: flex;
   text-align: center;
   align-items: flex-start;
+  flex-wrap: wrap;
+  margin-top: $spacing--sm;
 
   .stat {
     padding: $spacing--sm;
     flex: 1;
+
+    &:focus {
+      outline: none;
+    }
   }
 
   .label {

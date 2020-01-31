@@ -1,7 +1,7 @@
 <template>
   <header class="app-header">
     <div class="logo">
-      <Logo stroke="#fff" />
+      <Logo stroke="#fff" theme="white_outline" />
     </div>
 
     <h1 class="headline">

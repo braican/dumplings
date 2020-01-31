@@ -12,9 +12,9 @@
 
     <ul v-if="comments.length && commentsVisible" class="comment-list">
       <li
-        v-for="(comment, index) in comments"
+        v-for="comment in comments"
         :key="comment.id"
-        :class="['comment', index > 1 && !allCommentsVisible && 'comment--hidden']"
+        class="comment"
       >
         <header class="comment-header">
           <span class="commenter">
@@ -29,15 +29,6 @@
         </p>
       </li>
     </ul>
-
-    <!-- <button
-      v-if="comments.length > 2"
-      type="button"
-      class="all-comments-toggler"
-      @click="toggleShowAllComments"
-    >
-      {{ allCommentsVisible ? 'Collapse comments' : `Show ${comments.length - 2} more comment${comments.length - 2 > 1 ? 's' : ''}` }}
-    </button> -->
 
     <button
       v-if="!commenting && commentsVisible"
@@ -73,7 +64,6 @@ export default {
   data() {
     return {
       commentsVisible: false,
-      allCommentsVisible: true,
     };
   },
   computed: {
@@ -96,9 +86,6 @@ export default {
     },
     toggleShowComments() {
       this.commentsVisible = !this.commentsVisible;
-    },
-    toggleShowAllComments() {
-      this.allCommentsVisible = !this.allCommentsVisible;
     },
   },
 };
@@ -151,10 +138,6 @@ export default {
   }
 }
 
-.comment--hidden {
-  display: none;
-}
-
 .comment-header {
   margin-bottom: .33rem;
 }
@@ -164,19 +147,8 @@ export default {
   font-size: $fz--sm;
 }
 
-.all-comments-toggler {
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: $c--gray-9;
-  font-size: $fz--xs;
-  margin-bottom: $spacing;
-  margin-left: $spacing;
-  margin-left: calc(#{$spacing} + 2px);
-}
-
 .add-comment {
   font-size: $fz--sm;
 }
-
 
 </style>
