@@ -19,7 +19,7 @@
 import { mapState } from 'vuex';
 import AppHeader from '@/components/AppHeader';
 import AppNav from '@/components/AppNav';
-import LogDumpling from '@/components/LogDumpling';
+import LogDumpling from '@/components/AddCheckin/LogDumpling';
 
 export default {
   name: 'App',

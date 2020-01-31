@@ -30,6 +30,8 @@ const store = new Vuex.Store({
     commentMap: {},
 
     starsMap: {},
+
+    currentRoute: null,
   },
   getters: {
     userCheckins: state => state.checkins.filter(({ uid }) => uid === state.currentUser.uid),
@@ -106,6 +108,7 @@ const store = new Vuex.Store({
     },
     closeLoggingDumpling({ commit }) {
       commit('setLoggingDumpling', false);
+      commit('setCurrentRoute', null);
       document.body.classList.remove('fixed-scroll');
     },
   },
@@ -147,6 +150,9 @@ const store = new Vuex.Store({
     },
     setStars(state, val) {
       state.starsMap = val;
+    },
+    setCurrentRoute(state, val) {
+      state.currentRoute = val;
     },
   },
 });

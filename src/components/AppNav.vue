@@ -56,6 +56,7 @@ export default {
   },
   methods: {
     logDumpling() {
+      this.$store.commit('setCurrentRoute', this.$router.currentRoute);
       this.$store.dispatch('startLoggingDumpling');
     },
   },

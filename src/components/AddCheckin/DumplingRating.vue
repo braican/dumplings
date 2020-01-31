@@ -104,6 +104,14 @@ export default {
       this.$emit('note', this.note);
     },
   },
+  mounted() {
+    window.onpopstate = () => {
+      this.$emit('back');
+    };
+  },
+  beforeDestroy() {
+    window.onpopstate = null;
+  },
 
   methods: {
     submit(event) {

@@ -12,8 +12,9 @@
 </template>
 
 <script>
-import DumplingPicker from '@/components/DumplingPicker';
-import DumplingRating from '@/components/DumplingRating';
+import { mapState } from 'vuex';
+import DumplingPicker from '@/components/AddCheckin/DumplingPicker';
+import DumplingRating from '@/components/AddCheckin/DumplingRating';
 
 export default {
   name: 'LogDumpling',
@@ -23,6 +24,14 @@ export default {
       pickedDumpling: null,
     };
   },
+  computed: {
+    ...mapState(['currentRoute']),
+  },
+  // mounted() {
+  //   window.addEventListener('onpopstate', () => {
+  //     this.$router.push(this.currentRoute.fullPath);
+  //   });
+  // },
   methods: {
     handlePicked(dumpling) {
       this.pickedDumpling = dumpling;

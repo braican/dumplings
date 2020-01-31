@@ -9,6 +9,8 @@ import Dumplings from './views/Dumplings';
 import Admin from './views/Admin';
 import User from './views/User';
 
+import store from './store';
+
 Vue.use(Router);
 
 const router = new Router({
@@ -69,7 +71,10 @@ router.beforeEach((to, from, next) => {
   const requiresAdmin = to.matched.some(({ meta }) => meta.requiresAdmin);
   const { currentUser } = firebase.auth();
 
-  if (requiresAdmin && (!currentUser || currentUser.email !== adminEmail)) {
+  if (store.state.currentRoute) {
+    next(store.state.currentRoute.path);
+  } else if (requiresAdmin && (!currentUser || currentUser.email !== adminEmail)) {
+  // if (requiresAdmin && (!currentUser || currentUser.email !== adminEmail)) {
     next('/feed');
   } else if (requiresAuth && !currentUser) {
     next('/');

@@ -112,6 +112,13 @@ export default {
   },
   mounted() {
     this.$refs.search.focus();
+
+    window.onpopstate = () => {
+      this.$store.dispatch('closeLoggingDumpling');
+    };
+  },
+  beforeDestroy() {
+    window.onpopstate = null;
   },
   methods: {
     cancel() {
