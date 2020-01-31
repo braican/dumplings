@@ -12,12 +12,8 @@
         Click to show {{ hiddenCheckins.length }} new checkin{{ hiddenCheckins.length > 1 ? 's' : '' }}
       </button>
       <ul v-if="checkins.length" class="feed">
-        <li
-          v-for="(checkin, index) in checkins"
-          :key="checkin.id"
-          :class="[index < highlightedCheckins && 'highlighted', 'checkin-list-item']"
-        >
-          <Checkin :checkin="checkin" />
+        <li v-for="(checkin, index) in checkins" :key="checkin.id">
+          <Checkin :checkin="checkin" :highlighted="index < highlightedCheckins" />
         </li>
       </ul>
 
@@ -66,14 +62,6 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/_abstracts.scss';
 
-.checkin-list-item > div {
-  @include transition(background-color, .5s);
-  background-color: $c--white;
-}
-.checkin-list-item.highlighted > div {
-  background-color: $c--highlight;
-}
-
 .feed > li:last-child > div:after {
   content: none;
 }
@@ -81,6 +69,6 @@ export default {
 .show-hidden-posts-button {
   width: 100%;
   text-align: center;
-  margin-bottom: $spacing--sm;
+  margin-top: $spacing--sm;
 }
 </style>

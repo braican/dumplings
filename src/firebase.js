@@ -15,5 +15,4 @@ export const usersCollection = db.collection('users');
 export const restaurantsCollection = db.collection('restaurants');
 export const dumplingsCollection = db.collection('dumplings');
 export const commentsCollection = db.collection('comments');
-export const likesCollection = db.collection('likes');
 export const checkinsCollection = db.collection('checkins');

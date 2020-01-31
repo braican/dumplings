@@ -140,10 +140,6 @@ export default {
   padding: $spacing--sm;
   font-size: $fz--lg;
   border-color: $c--gray-9;
-
-  &:focus {
-    outline: 2px solid $c--primary;
-  }
 }
 
 .dumpling-list {

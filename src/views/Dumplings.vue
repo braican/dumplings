@@ -4,7 +4,7 @@
       The Dumplings of Dumpling Week
     </h2>
 
-    <ul v-if="Object.keys(dumplings).length">
+    <ul v-if="Object.keys(dumplings).length" class="dumpling-list">
       <li v-for="(entry, restaurantId) in dumplings" :key="restaurantId">
         <RestaurantListing :restaurant="entry" />
       </li>
@@ -29,4 +29,11 @@ export default {
 };
 </script>
 
+<style lang="scss" scoped>
+@import '@/styles/_abstracts.scss';
+
+.dumpling-list {
+  margin-top: $spacing * 2;
+}
+</style>
 

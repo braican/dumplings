@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import Cookies from 'js-cookie';
 
-import { auth, usersCollection, checkinsCollection, restaurantsCollection, dumplingsCollection } from '@/firebase';
+import { auth, usersCollection, checkinsCollection, restaurantsCollection, commentsCollection, dumplingsCollection } from '@/firebase';
 
 Vue.use(Vuex);
 
@@ -17,6 +17,9 @@ const store = new Vuex.Store({
     checkinsLoaded: false,
 
     loggingDumpling: false,
+
+    commenting: false,
+    commentMap: {},
   },
   actions: {
     fetchUserProfile({ commit, state }) {
@@ -113,6 +116,12 @@ const store = new Vuex.Store({
     setLoggingDumpling(state, val) {
       state.loggingDumpling = val;
     },
+    setCommenting(state, val) {
+      state.commenting = val;
+    },
+    setCommentMap(state, val) {
+      state.commentMap = val;
+    },
   },
 });
 
@@ -152,6 +161,23 @@ auth.onAuthStateChanged(user => {
 
       store.commit('setCheckins', checkinsArray);
     }
+  });
+
+  commentsCollection.orderBy('createdOn', 'desc').onSnapshot(querySnapshot => {
+    const commentMap = {};
+
+    querySnapshot.forEach(doc => {
+      const { checkin, ...rest } = doc.data();
+      const commentData = { ...rest, id: doc.id };
+
+      if (commentMap[checkin]) {
+        commentMap[checkin].push(commentData);
+      } else {
+        commentMap[checkin] = [commentData];
+      }
+    });
+
+    store.commit('setCommentMap', commentMap);
   });
 });
 

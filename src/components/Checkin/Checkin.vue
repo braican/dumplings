@@ -1,5 +1,5 @@
 <template>
-  <div :class="['checkin', commenting && 'checkin--commenting']">
+  <div :class="['checkin', commenting === checkin.id && 'checkin--commenting', commenting && commenting !== checkin.id && 'checkin--dimmed', highlighted && 'checkin--highlighted']">
     <div class="meta">
       <div class="avatar">
         <img :src="checkin.photo" :alt="`Avatar for ${checkin.userName}`">
@@ -31,47 +31,35 @@
     </p>
 
     <Rating :rating="checkin.rating" />
-
-    <Comments @openCommentForm="openCommentForm" />
+    <Comments :checkin="checkin.id" :commenting="commenting === checkin.id" />
   </div>
 </template>
 
 <script>
-import moment from 'moment';
+import { mapState } from 'vuex';
 import Rating from './Rating';
 import Comments from './Comments';
-
 
 export default {
   name: 'Checkin',
   components: { Rating, Comments },
-  filters: {
-    formatDate(val) {
-      if (!val) {
-        return '-';
-      }
-      const date = val.toDate();
-      return moment(date).fromNow();
-    },
-  },
   props: {
     checkin: {
       type: Object,
       required: true,
     },
+    highlighted: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       expanded: false,
-      commenting: false,
     };
   },
-  methods: {
-    openCommentForm() {
-      console.log('test');
-
-      this.commenting = true;
-    },
+  computed: {
+    ...mapState(['commenting']),
   },
 };
 </script>
@@ -80,10 +68,13 @@ export default {
 @import '@/styles/_abstracts.scss';
 
 .checkin {
+  transition: background-color .6s ease-in-out, opacity .2s ease-in-out;
+  background-color: $c--white;
   position: relative;
-  padding: $spacing;
+  padding: $spacing * 1.5 $spacing;
   margin-left: -$spacing;
   margin-right: -$spacing;
+  border-radius: 6px;
 
   &:after {
     content: '';
@@ -92,16 +83,16 @@ export default {
     left: $spacing;
     right: $spacing;
     bottom: 0;
-    height: 1px;
+    height: 8px;
     background-color: $c--gray-e;
   }
 
-  &--commenting {
-    background-color: $c--gray-f;
+  &--highlighted {
+    background-color: $c--highlight;
+  }
 
-    &:after {
-      content: none;
-    }
+  &--dimmed {
+    opacity: 0.2;
   }
 }
 

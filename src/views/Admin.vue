@@ -56,12 +56,14 @@ const getLatLng = ({ maps }, address) =>
 
 export default {
   name: 'Admin',
-  data: () => ({
-    restaurant: '',
-    address: '',
-    description: '',
-    google: null,
-  }),
+  data() {
+    return {
+      restaurant: '',
+      address: '',
+      description: '',
+      google: null,
+    };
+  },
   async mounted() {
     if (this.google !== null) {
       return;

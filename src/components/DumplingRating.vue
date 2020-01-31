@@ -108,20 +108,19 @@ export default {
   methods: {
     submit(event) {
       event.preventDefault();
-      const { currentUser, userProfile, note, rating, dumpling, dumplings } = this;
 
       this.loading = true;
-
       const checkinData = {
         createdOn: new Date(),
-        uid: currentUser.uid,
-        userName: userProfile.displayName,
-        photo: userProfile.photoURL,
-        dumpling: dumpling.id,
-        description: dumpling.description,
-        restaurant: dumplings[dumpling.restaurant].name,
-        note,
-        rating,
+        uid: this.currentUser.uid,
+        userName: this.userProfile.displayName,
+        photo: this.userProfile.photoURL,
+        dumpling: this.dumpling.id,
+        description: this.dumpling.description,
+        restaurant: this.dumplings[this.dumpling.restaurant].name,
+        commentCount: 0,
+        note: this.note,
+        rating: this.rating,
       };
 
       checkinsCollection.add(checkinData)
@@ -202,14 +201,8 @@ export default {
 .dumpling__notes {
   margin-top: $spacing;
   width: 100%;
-  resize: none;
-  padding: .5em;
   border-color: $c--gray-e;
   background-color: $c--gray-f;
-
-  &:focus {
-    outline: 2px solid $c--primary;
-  }
 }
 
 .actions {
