@@ -21,6 +21,9 @@ const store = new Vuex.Store({
     commenting: false,
     commentMap: {},
   },
+  getters: {
+    userCheckins: state => state.checkins.filter(({ uid }) => uid === state.currentUser.uid),
+  },
   actions: {
     fetchUserProfile({ commit, state }) {
       usersCollection.doc(state.currentUser.uid).get()

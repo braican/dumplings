@@ -24,7 +24,11 @@
       </li>
     </ul>
 
-    <button class="log-dumpling" @click="logDumpling">
+    <button
+      v-if="!commenting"
+      class="log-dumpling"
+      @click="logDumpling"
+    >
       <div class="icon">
         <IconPlus />
       </div>
@@ -45,7 +49,7 @@ export default {
   name: 'AppNav',
   components: { NavIcon, IconPlus },
   computed: {
-    ...mapState(['userProfile']),
+    ...mapState(['userProfile', 'commenting']),
     iconHome: () => IconHome,
     iconList: () => IconList,
     iconUser: () => IconUser,

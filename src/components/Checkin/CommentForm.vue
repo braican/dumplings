@@ -2,8 +2,9 @@
   <form class="comment-form" @submit="submit">
     <textarea
       ref="commentForm"
-      v-model="comment"
+      :value="comment"
       class="comment-box"
+      @input="event => comment = event.target.value"
     />
     <div class="actions">
       <button
@@ -26,7 +27,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import { commentsCollection, checkinsCollection } from '@/firebase';
+import { commentsCollection } from '@/firebase';
 
 export default {
   name: 'CheckinCommentForm',
@@ -57,10 +58,9 @@ export default {
 
       commentsCollection.add(commentData)
         .then(() => {
-          console.log('STATUS: Comment added');
+          console.log('STATUS: Comment added'); // eslint-disable-line
           this.cancel();
         });
-
     },
     cancel() {
       this.$store.commit('setCommenting', false);

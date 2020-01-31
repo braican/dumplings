@@ -22,7 +22,7 @@
       </div>
     </div>
 
-    <div v-else>
+    <div v-else class="loading">
       <p>Loading...</p>
     </div>
   </div>
@@ -71,4 +71,9 @@ export default {
   text-align: center;
   margin-top: $spacing--sm;
 }
+
+.loading {
+  margin-top: $spacing;
+}
+
 </style>

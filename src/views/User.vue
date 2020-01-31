@@ -9,24 +9,25 @@
       </h2>
     </div>
 
-    <div class="utility">
-      <ul>
-        <li>
-          <button @click="logout">
-            Log out
-          </button>
-        </li>
-      </ul>
-    </div>
+    <button class="logout meta-info" @click="logout">
+      Log out
+    </button>
+
+    <Overview />
+
+    <Activity />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import { auth } from '@/firebase';
+import Overview from '@/components/Profile/Overview';
+import Activity from '@/components/Profile/Activity';
 
 export default {
   name: 'User',
+  components: { Overview, Activity },
   computed: {
     ...mapState(['userProfile']),
   },
@@ -61,7 +62,9 @@ export default {
   }
 }
 
-.utility {
-  margin-top: $spacing--sm;
+.logout {
+  position: absolute;
+  top: $spacing--sm;
+  right: $spacing--sm;
 }
 </style>

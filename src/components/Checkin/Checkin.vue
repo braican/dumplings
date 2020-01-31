@@ -1,11 +1,11 @@
 <template>
   <div :class="['checkin', commenting === checkin.id && 'checkin--commenting', commenting && commenting !== checkin.id && 'checkin--dimmed', highlighted && 'checkin--highlighted']">
     <div class="meta">
-      <div class="avatar">
+      <div v-if="!light" class="avatar">
         <img :src="checkin.photo" :alt="`Avatar for ${checkin.userName}`">
       </div>
 
-      <p class="user-name">
+      <p v-if="!light" class="user-name">
         {{ checkin.userName }}
       </p>
       <p class="timestamp">
@@ -49,6 +49,10 @@ export default {
       required: true,
     },
     highlighted: {
+      type: Boolean,
+      default: false,
+    },
+    light: {
       type: Boolean,
       default: false,
     },
