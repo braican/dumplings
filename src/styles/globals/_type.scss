@@ -24,13 +24,13 @@ textarea {
   resize: none;
 }
 
-input,
+input[type="text"],
 textarea {
   border-style: solid;
   padding: 0.5em;
 }
 
-input:focus,
+input[type="text"]:focus,
 textarea:focus {
   outline: 2px solid $c--primary;
 }
