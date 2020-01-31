@@ -64,7 +64,7 @@ const store = new Vuex.Store({
     },
     fetchDumplings({ commit }) {
       const fetcher = new Promise(resolve => {
-        if (Cookies.get('cached_dumplings_timer')) {
+        if (Cookies.get('cached_dumplings_expiry')) {
           console.log('STATUS: Get dumplings from cache.'); // eslint-disable-line
           return resolve(JSON.parse(localStorage.getItem('cached_dumplings')));
         }
@@ -89,7 +89,7 @@ const store = new Vuex.Store({
 
           console.log('STATUS: Dumplings loaded from firebase.'); //eslint-disable-line
           localStorage.setItem('cached_dumplings', JSON.stringify(dumplingMap));
-          Cookies.set('cached_dumplings_timer', 1, { expires: .5 });
+          Cookies.set('cached_dumplings_expiry', 1, { expires: .5 });
           resolve(dumplingMap);
         });
       });

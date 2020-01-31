@@ -5,7 +5,13 @@
         {{ restaurant.name }}
       </h6>
       <p class="meta-info restaurant__address">
-        {{ restaurant.address }}
+        <ul v-if="restaurant.locations && restaurant.locations.length > 1">
+          <li v-for="loc in restaurant.locations" :key="loc.address">
+            {{ loc.address }}
+          </li>
+        </ul>
+
+        <span v-else>{{ restaurant.address }}</span>
       </p>
 
       <div v-if="!light && checkins.length > 0" class="indicators indicator--had">
