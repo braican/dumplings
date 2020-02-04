@@ -15,7 +15,7 @@ import {
 
 import { mapSnapshotToCheckins } from '@/util';
 
-export const checkinsPerPage = 12;
+export const checkinsPerPage = 10;
 
 Vue.use(Vuex);
 
@@ -28,6 +28,7 @@ const store = new Vuex.Store({
 
     checkins: [],
     hiddenCheckins: [],
+    userCheckins: [],
     checkinsLoaded: false,
     oldestCheckin: null,
     loadingMoreCheckins: false,
@@ -44,10 +45,10 @@ const store = new Vuex.Store({
     currentRoute: null,
   },
   getters: {
-    userCheckins: state => state.checkins.filter(({ uid }) => uid === state.currentUser.uid),
+    userCheckinsByRestaurant: state => rid => state.userCheckins.filter(({ restaurantId }) => restaurantId === rid),
+    userRestaurantCount: state => [... new Set(state.userCheckins.map(checkin => checkin.restaurantId)) ].length,
     starsCount: state => Object.keys(state.starsMap).length,
     isStarred: state => restaurantId => state.starsMap[restaurantId],
-    userCheckinsByRestaurant: (state, getters) => rid => getters.userCheckins.filter(({ restaurantId }) => restaurantId === rid),
     starredData: state => {
       const starredRestaurantIds = Object.keys(state.starsMap);
       const starred =  Object.keys(state.dumplings)
@@ -58,19 +59,17 @@ const store = new Vuex.Store({
   },
   actions: {
     fetchUserProfile({ commit, state }) {
-      usersCollection.doc(state.currentUser.uid).get()
-        .then(res => {
-          let userData = res.data();
+      usersCollection.doc(state.currentUser.uid).onSnapshot(res => {
+        let userData = res.data();
 
-          if (!res.exists) {
-            const { displayName, photoURL, uid } = state.currentUser;
-            userData = { displayName, photoURL };
-            usersCollection.doc(uid).set(userData, { merge: true });
-          }
+        if (!res.exists) {
+          const { displayName, photoURL, uid } = state.currentUser;
+          userData = { displayName, photoURL };
+          usersCollection.doc(uid).set(userData, { merge: true });
+        }
 
-          commit('setUserProfile', userData);
-        })
-        .catch(err => console.error(err));
+        commit('setUserProfile', userData);
+      });
     },
     fetchDumplings({ commit }) {
       const fetcher = new Promise(resolve => {
@@ -187,6 +186,9 @@ const store = new Vuex.Store({
         state.checkinsLoaded = true;
       }
     },
+    setUserCheckins(state, val) {
+      state.userCheckins = val;
+    },
     setCheckinCount(state, val) {
       state.checkinCount = val;
     },
@@ -291,6 +293,11 @@ auth.onAuthStateChanged(user => {
         store.commit('setHiddenCheckins', newCheckin);
       }
     });
+  });
+
+  checkinsCollection.orderBy('createdOn', 'desc').where('uid', '==', user.uid).onSnapshot(querySnapshot => {
+    const userCheckins = mapSnapshotToCheckins(querySnapshot);
+    store.commit('setUserCheckins', userCheckins);
   });
 
   commentsCollection.orderBy('createdOn', 'desc').onSnapshot(querySnapshot => {

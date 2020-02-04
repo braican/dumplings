@@ -14,7 +14,7 @@ exports.documentWriteListener = functions.firestore.document('/checkins/{documen
     db.doc('/meta/counters').update({checkinCount: FieldValue.increment(1)});
     db.doc(`/dumplings/${dumpling}`).update({
       checkinCount: FieldValue.increment(1),
-      aggregateRating: FieldValue.increment(rating)
+      aggregateRating: FieldValue.increment(rating),
     });
   } else if (!change.after.exists) {
     const { dumpling, rating } = change.before.data();

@@ -16,7 +16,7 @@
     <div v-if="checkinsLoaded">
       <Overview class="section" @updateView="newView => view = newView" />
 
-      <ul class="profile-nav">
+      <ul class="profile-nav section">
         <li>
           <button :class="['profile-nav-button', view === 'activity' && 'profile-nav-button--active']" @click="view = 'activity'">
             Activity
@@ -95,7 +95,7 @@ export default {
 }
 
 .section {
-  margin-bottom: $spacing;
+  margin-top: $spacing;
 }
 
 .profile-nav li {

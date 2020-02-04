@@ -58,7 +58,7 @@
         class="dumpling-description"
       >
         <p>{{ dumpling.description }}</p>
-        <p v-if="dumpling.checkinCount !== undefined" class="dumpling-data">
+        <p v-if="restaurant.dumplings.length > 1 && dumpling.checkinCount !== undefined" class="dumpling-data">
           <span v-if="dumpling.checkinCount > 0" class="avg-rating">{{ dumpling.avgRating.toFixed(1) }} avg</span>
           <span v-if="dumpling.checkinCount > 0">&nbsp;/&nbsp;</span>
           <span>{{ dumpling.checkinCount }} checkin{{ dumpling.checkinCount === 1 ? '' : 's' }}</span>
@@ -201,24 +201,24 @@ export default {
 }
 
 .dumpling-description {
-  position: relative;
-  margin-top: $spacing--sm;
-
   .dumpling-data {
     margin-top: .5em;
   }
 
   + .dumpling-description{
+    position: relative;
+    margin-top: $spacing--sm;
     padding-top: $spacing--sm;
+
     &:before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 20%;
-    border-top: 2px solid $c--gray-e;
-  }
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20%;
+      border-top: 2px solid $c--gray-e;
+    }
   }
 }
 

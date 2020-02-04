@@ -4,6 +4,10 @@
       The Dumplings of Dumpling Week
     </h2>
 
+    <p class="small-stats">
+      You've been to {{ userRestaurantCount }} of {{ Object.keys(dumplings).length }} restaurants
+    </p>
+
     <ul v-if="Object.keys(dumplings).length" class="dumpling-list">
       <li v-for="(entry, restaurantId) in dumplings" :key="restaurantId">
         <DumplingListing :restaurant="{...entry, id: restaurantId}" />
@@ -17,7 +21,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import DumplingListing from '@/components/DumplingListing';
 
 export default {
@@ -25,6 +29,7 @@ export default {
   components: { DumplingListing },
   computed: {
     ...mapState(['dumplings', 'dumplingsLoaded']),
+    ...mapGetters(['userRestaurantCount']),
   },
   watch: {
     dumplingsLoaded: {
@@ -41,6 +46,12 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/styles/_abstracts.scss';
+
+.small-stats {
+  font-weight: $fw--bold;
+  color: $c--primary;
+  margin-top: $spacing;
+}
 
 .dumpling-list {
   margin-top: $spacing;
