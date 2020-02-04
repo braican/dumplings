@@ -35,12 +35,22 @@
       </button>
     </header>
 
+
+
     <button class="about-button" @click="expandDumplings">
-      The dumpling
-
-      <span v-if="restaurant.dumplings.length > 1">({{ restaurant.dumplings.length }} options)</span>
-
-      <ExpandIcon :expanded="expanded" />
+      <p class="about-button-label">
+        The dumpling
+        <span v-if="restaurant.dumplings.length > 1">({{ restaurant.dumplings.length }} options)</span>
+        <ExpandIcon :expanded="expanded" />
+      </p>
+      <p v-if="restaurant.dumplings.length === 1 && restaurant.dumplings[0].checkinCount !== undefined" class="dumpling-data">
+        <span v-if="restaurant.dumplings[0].checkinCount > 0" class="avg-rating">{{ restaurant.dumplings[0].avgRating.toFixed(1) }} avg</span>
+        <span v-if="restaurant.dumplings[0].checkinCount > 0">&nbsp;/&nbsp;</span>
+        <span>{{ restaurant.dumplings[0].checkinCount }} checkin{{ restaurant.dumplings[0].checkinCount === 1 ? '' : 's' }}</span>
+      </p>
+      <p v-else>
+&nbsp;
+      </p>
     </button>
 
     <ul v-show="expanded">
@@ -63,7 +73,7 @@ import StarIcon from '@/svg/iconStar';
 import DumplingIcon from '@/svg/dumplings';
 
 export default {
-  name: 'RestaurantListing',
+  name: 'DumplingListing',
   components: { ExpandIcon, StarIcon, DumplingIcon },
   props: {
     restaurant: {
@@ -108,7 +118,9 @@ export default {
 @import '@/styles/_abstracts.scss';
 
 .restaurant {
-  margin-top: $spacing;
+  padding-top: $spacing;
+  padding-bottom: $spacing;
+  border-bottom: 2px solid $c--gray-e;
 }
 
 .header {
@@ -122,6 +134,10 @@ export default {
 
 .restaurant__address {
   margin-top: .5em;
+
+  li + li {
+    margin-top: .5rem;
+  }
 }
 
 .indicators {
@@ -150,18 +166,34 @@ export default {
   }
 }
 
-
-
+.dumpling-data {
+  margin-left: .5em;
+}
+.avg-rating {
+  font-weight: $fw--bold;
+  color: $c--primary;
+}
 
 .about-button {
-  font-size: $fz--sm;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding-top: .5em;
   padding-bottom: .5em;
+  text-align: left;
 
   &:focus {
     outline: none;
-    color: $c--primary;
+
+    .about-button-label {
+      color: $c--primary;
+    }
   }
+}
+
+.about-button-label {
+  font-size: $fz--sm;
 }
 
 .dumpling-description {

@@ -6,7 +6,7 @@
 
     <ul v-if="Object.keys(dumplings).length" class="dumpling-list">
       <li v-for="(entry, restaurantId) in dumplings" :key="restaurantId">
-        <RestaurantListing :restaurant="{...entry, id: restaurantId}" />
+        <DumplingListing :restaurant="{...entry, id: restaurantId}" />
       </li>
     </ul>
 
@@ -18,13 +18,23 @@
 
 <script>
 import { mapState } from 'vuex';
-import RestaurantListing from '@/components/RestaurantListing';
+import DumplingListing from '@/components/DumplingListing';
 
 export default {
   name: 'Dumplings',
-  components: { RestaurantListing },
+  components: { DumplingListing },
   computed: {
-    ...mapState(['dumplings']),
+    ...mapState(['dumplings', 'dumplingsLoaded']),
+  },
+  watch: {
+    dumplingsLoaded: {
+      handler(value) {
+        if (value === true) {
+          this.$store.dispatch('fetchDumplingRatings');
+        }
+      },
+      immediate: true,
+    },
   },
 };
 </script>

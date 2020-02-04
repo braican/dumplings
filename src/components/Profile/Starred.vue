@@ -5,7 +5,7 @@
     </p>
     <ul v-if="starredData.length" class="starred-list">
       <li v-for="starred in starredData" :key="starred.restaurantId">
-        <RestaurantListing :restaurant="starred" light />
+        <DumplingListing :restaurant="starred" light />
       </li>
     </ul>
 
@@ -19,11 +19,11 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import RestaurantListing from '@/components/RestaurantListing';
+import DumplingListing from '@/components/DumplingListing';
 
 export default {
   name: 'UserStars',
-  components: { RestaurantListing },
+  components: { DumplingListing },
   computed: {
     ...mapGetters(['starredData']),
   },

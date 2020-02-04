@@ -25,9 +25,9 @@
           </p>
 
           <button
-            v-else
+            v-else-if="checkinCount > checkinsPerPage"
             type="button"
-            class="load-more-checkins"
+            class="button button--gray load-more-checkins"
             @click="loadMore"
           >
             Load more
@@ -56,6 +56,7 @@
 <script>
 import { mapState } from 'vuex';
 import Checkin from '@/components/Checkin/Checkin';
+import { checkinsPerPage } from '@/store';
 
 export default {
   name: 'Feed',
@@ -63,10 +64,11 @@ export default {
   data() {
     return {
       highlightedCheckins: 0,
+      checkinsPerPage,
     };
   },
   computed: {
-    ...mapState(['checkins', 'checkinsLoaded', 'hiddenCheckins', 'loadingMoreCheckins']),
+    ...mapState(['checkins', 'checkinsLoaded', 'hiddenCheckins', 'loadingMoreCheckins', 'checkinCount']),
   },
   methods: {
     showHiddenCheckins() {
@@ -111,6 +113,7 @@ export default {
 
 .load-more-checkins {
   margin-top: $spacing--sm;
+  width: 100%;
 
   &:focus{
     outline: none

@@ -16,18 +16,13 @@ exports.documentWriteListener = functions.firestore.document('/checkins/{documen
       checkinCount: FieldValue.increment(1),
       aggregateRating: FieldValue.increment(rating)
     });
-    return 0;
-  }
-
-  // Deleted document, remove from the count.
-  if (!change.after.exists) {
+  } else if (!change.after.exists) {
     const { dumpling, rating } = change.before.data();
     db.doc('/meta/counters').update({checkinCount: FieldValue.increment(-1)});
     db.doc(`/dumplings/${dumpling}`).update({
       checkinCount: FieldValue.increment(-1),
       aggregateRating: FieldValue.increment(rating * -1)
     });
-    return 0;
   }
 
   return 0;
