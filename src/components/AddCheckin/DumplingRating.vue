@@ -135,6 +135,7 @@ export default {
         .then(() => {
           console.log('STATUS: Checkin created successfully.'); // eslint-disable-line
           this.loading = false;
+          this.$store.dispatch('incrementDisplayedCheckinCount');
           this.close();
         });
     },

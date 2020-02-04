@@ -9,23 +9,28 @@
         class="button button--gray show-hidden-posts-button"
         @click="showHiddenCheckins"
       >
-        Click to show {{ hiddenCheckins.length }} new checkin{{ hiddenCheckins.length > 1 ? 's' : '' }}
+        Click to show {{ hiddenCheckins.length }} new checkin{{
+          hiddenCheckins.length > 1 ? "s" : ""
+        }}
       </button>
 
       <div v-if="checkins.length">
         <ul class="feed">
           <li v-for="(checkin, index) in checkins" :key="checkin.id">
-            <Checkin :checkin="checkin" :highlighted="index < highlightedCheckins" />
+            <Checkin
+              :checkin="checkin"
+              :highlighted="index < highlightedCheckins"
+            />
           </li>
         </ul>
 
-        <div class="load-more">
+        <div v-if="checkinCount > displayedCheckinCount" class="load-more">
           <p v-if="loadingMoreCheckins">
             Loading more dumpling checkins...
           </p>
 
           <button
-            v-else-if="checkinCount > checkinsPerPage"
+            v-else
             type="button"
             class="button button--gray load-more-checkins"
             @click="loadMore"
@@ -56,7 +61,6 @@
 <script>
 import { mapState } from 'vuex';
 import Checkin from '@/components/Checkin/Checkin';
-import { checkinsPerPage } from '@/store';
 
 export default {
   name: 'Feed',
@@ -64,11 +68,17 @@ export default {
   data() {
     return {
       highlightedCheckins: 0,
-      checkinsPerPage,
     };
   },
   computed: {
-    ...mapState(['checkins', 'checkinsLoaded', 'hiddenCheckins', 'loadingMoreCheckins', 'checkinCount']),
+    ...mapState([
+      'checkins',
+      'checkinsLoaded',
+      'hiddenCheckins',
+      'loadingMoreCheckins',
+      'checkinCount',
+      'displayedCheckinCount',
+    ]),
   },
   methods: {
     showHiddenCheckins() {
@@ -90,7 +100,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/_abstracts.scss';
+@import "@/styles/_abstracts.scss";
 
 .feed > li:last-child > div:after {
   content: none;
@@ -111,13 +121,15 @@ export default {
   font-size: 32px;
 }
 
+.load-more {
+  height: 6rem;
+}
 .load-more-checkins {
   margin-top: $spacing--sm;
   width: 100%;
 
-  &:focus{
-    outline: none
+  &:focus {
+    outline: none;
   }
 }
-
 </style>

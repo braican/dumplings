@@ -15,7 +15,7 @@ import {
 
 import { mapSnapshotToCheckins } from '@/util';
 
-export const checkinsPerPage = 3;
+export const checkinsPerPage = 12;
 
 Vue.use(Vuex);
 
@@ -32,6 +32,7 @@ const store = new Vuex.Store({
     oldestCheckin: null,
     loadingMoreCheckins: false,
     checkinCount: 0,
+    displayedCheckinCount: checkinsPerPage,
 
     loggingDumpling: false,
 
@@ -143,10 +144,14 @@ const store = new Vuex.Store({
       commit('setLoadingMoreCheckins', true);
 
       checkinsCollection.orderBy('createdOn', 'desc').limit(checkinsPerPage).startAfter(state.oldestCheckin).get().then(querySnapshot => {
+        const incomingCheckinCount = querySnapshot.docs.length;
         const nextCheckins = mapSnapshotToCheckins(querySnapshot);
         const newCheckins = state.checkins.concat(nextCheckins);
+        const oldestCheckin = querySnapshot.docs[incomingCheckinCount - 1];
+        commit('setDisplayedCheckinCount', state.displayedCheckinCount + querySnapshot.docs.length);
         commit('setLoadingMoreCheckins', false);
         commit('setCheckins', newCheckins);
+        commit('setOldestCheckin', oldestCheckin);
       });
     },
 
@@ -165,6 +170,9 @@ const store = new Vuex.Store({
       commit('setCurrentRoute', null);
       document.body.classList.remove('fixed-scroll');
     },
+    incrementDisplayedCheckinCount({ commit, state }) {
+      commit('setDisplayedCheckinCount', state.displayedCheckinCount + 1);
+    },
   },
   mutations: {
     setCurrentUser(state, val) {
@@ -181,6 +189,9 @@ const store = new Vuex.Store({
     },
     setCheckinCount(state, val) {
       state.checkinCount = val;
+    },
+    setDisplayedCheckinCount(state, val) {
+      state.displayedCheckinCount = val;
     },
     setHiddenCheckins(state, val) {
       if (!val) {

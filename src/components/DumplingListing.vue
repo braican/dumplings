@@ -35,8 +35,6 @@
       </button>
     </header>
 
-
-
     <button class="about-button" @click="expandDumplings">
       <p class="about-button-label">
         The dumpling
@@ -49,7 +47,7 @@
         <span>{{ restaurant.dumplings[0].checkinCount }} checkin{{ restaurant.dumplings[0].checkinCount === 1 ? '' : 's' }}</span>
       </p>
       <p v-else>
-&nbsp;
+        &nbsp;
       </p>
     </button>
 
@@ -60,6 +58,11 @@
         class="dumpling-description"
       >
         <p>{{ dumpling.description }}</p>
+        <p v-if="dumpling.checkinCount !== undefined" class="dumpling-data">
+          <span v-if="dumpling.checkinCount > 0" class="avg-rating">{{ dumpling.avgRating.toFixed(1) }} avg</span>
+          <span v-if="dumpling.checkinCount > 0">&nbsp;/&nbsp;</span>
+          <span>{{ dumpling.checkinCount }} checkin{{ dumpling.checkinCount === 1 ? '' : 's' }}</span>
+        </p>
       </li>
     </ul>
   </div>
@@ -166,9 +169,6 @@ export default {
   }
 }
 
-.dumpling-data {
-  margin-left: .5em;
-}
 .avg-rating {
   font-weight: $fw--bold;
   color: $c--primary;
@@ -190,6 +190,10 @@ export default {
       color: $c--primary;
     }
   }
+
+  .dumpling-data {
+    margin-left: .5em;
+  }
 }
 
 .about-button-label {
@@ -197,7 +201,25 @@ export default {
 }
 
 .dumpling-description {
-  margin-top: .5rem;
+  position: relative;
+  margin-top: $spacing--sm;
+
+  .dumpling-data {
+    margin-top: .5em;
+  }
+
+  + .dumpling-description{
+    padding-top: $spacing--sm;
+    &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20%;
+    border-top: 2px solid $c--gray-e;
+  }
+  }
 }
 
 </style>

@@ -43,7 +43,7 @@ export default {
 @import '@/styles/_abstracts.scss';
 
 .dumpling-list {
-  margin-top: $spacing * 2;
+  margin-top: $spacing;
 }
 </style>
 
