@@ -152,7 +152,7 @@ export default {
 }
 
 .indicator--had svg {
-  width: 24px;
+  width: 20px;
 }
 
 .indicator--star {
