@@ -140,6 +140,10 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+
+  @include mq($bp--mobile) {
+    max-height: 62vh;
+  }
 }
 
 .dumpling-input {

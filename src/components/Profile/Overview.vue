@@ -29,21 +29,34 @@
           Starred dumplings
         </p>
       </button>
+      <div class="stat">
+        <p class="data">
+          {{ userRestaurantCount }}
+        </p>
+        <p class="label">
+          Of {{ Object.keys(dumplings).length }} restaurants
+        </p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 export default {
   name: 'UserOverview',
   computed: {
-    ...mapGetters(['userCheckins', 'starsCount']),
+    ...mapGetters(['starsCount', 'userRestaurantCount']),
+    ...mapState(['userProfile', 'userCheckins', 'dumplings']),
     checkinCount() {
       return this.userCheckins.length;
     },
     averageRating() {
+      if (this.userCheckins.length === 0) {
+        return 0;
+      }
+
       const ratingsTotal = this.userCheckins.reduce((prev, checkin) => prev + checkin.rating, 0);
       const fullAverage = ratingsTotal / this.checkinCount;
       return (Math.round(fullAverage * 100) / 100).toFixed(1);
@@ -60,15 +73,14 @@ export default {
 }
 
 .stats {
-  display: flex;
-  text-align: center;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  margin-top: $spacing--sm;
+  width: 100%;
+  text-align: left;
+  margin-top: $spacing;
 
   .stat {
-    padding: $spacing--sm;
-    flex: 1;
+    display: flex;
+    align-items: center;
+    margin-top: .5rem;
 
     &:focus {
       outline: none;
@@ -78,6 +90,7 @@ export default {
   .label {
     font-size: $fz--sm;
     font-weight: $fw--bold;
+    margin-left: $spacing--sm;
   }
 
   .data {

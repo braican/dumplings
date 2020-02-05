@@ -54,6 +54,12 @@ export default {
   right: 0;
   bottom: 0;
   background-color: rgba($c--white, .9);
+
+  @include mq($bp--mobile) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .form-controls {
@@ -61,9 +67,16 @@ export default {
   width: 100%;
   background-color: $c--white;
   z-index: 3;
-  box-shadow: 0 -6px 20px rgba($c--black, .2);
   padding: $spacing $spacing 4rem $spacing;
   overflow: auto;
+  margin: auto;
+  max-width: 660px;
+
+  @include mq($bp--mobile) {
+    height: auto;
+    max-height: 80vh;
+    box-shadow: 0 0 20px rgba($c--black, .2);
+  }
 }
 
 .log-modal-header {

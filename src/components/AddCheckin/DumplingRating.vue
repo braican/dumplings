@@ -135,6 +135,7 @@ export default {
         .then(() => {
           console.log('STATUS: Checkin created successfully.'); // eslint-disable-line
           this.loading = false;
+          this.$store.dispatch('incrementDisplayedCheckinCount');
           this.close();
         });
     },
@@ -215,6 +216,7 @@ export default {
 
 .actions {
   margin-top: $spacing--sm;
+  min-height: 48px;
 }
 .check-in-button {
   width: 100%;

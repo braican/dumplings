@@ -20,14 +20,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 import Checkin from '@/components/Checkin/Checkin';
 
 export default {
   name: 'UserActivity',
   components: { Checkin },
   computed: {
-    ...mapGetters(['userCheckins']),
+    ...mapState(['userCheckins']),
   },
 };
 </script>

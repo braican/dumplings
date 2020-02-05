@@ -42,6 +42,12 @@ export default {
   &--logged-in {
     padding: 44px $spacing $spacing * 4 80px;
     padding: 44px $spacing $spacing * 4 calc(#{$spacing} + 44px);
+    max-width: 660px;
+    margin: auto;
+
+    @include mq($bp--mobile) {
+      padding-top: 112px;
+    }
   }
 }
 

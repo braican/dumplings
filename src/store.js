@@ -10,7 +10,12 @@ import {
   commentsCollection,
   dumplingsCollection,
   starsCollection,
+  metaCollection,
 } from '@/firebase';
+
+import { mapSnapshotToCheckins } from '@/util';
+
+export const checkinsPerPage = 10;
 
 Vue.use(Vuex);
 
@@ -19,10 +24,16 @@ const store = new Vuex.Store({
     currentUser: null,
     userProfile: {},
     dumplings: {},
+    dumplingsLoaded: false,
 
     checkins: [],
     hiddenCheckins: [],
+    userCheckins: [],
     checkinsLoaded: false,
+    oldestCheckin: null,
+    loadingMoreCheckins: false,
+    checkinCount: 0,
+    displayedCheckinCount: checkinsPerPage,
 
     loggingDumpling: false,
 
@@ -34,10 +45,10 @@ const store = new Vuex.Store({
     currentRoute: null,
   },
   getters: {
-    userCheckins: state => state.checkins.filter(({ uid }) => uid === state.currentUser.uid),
+    userCheckinsByRestaurant: state => rid => state.userCheckins.filter(({ restaurantId }) => restaurantId === rid),
+    userRestaurantCount: state => [... new Set(state.userCheckins.map(checkin => checkin.restaurantId)) ].length,
     starsCount: state => Object.keys(state.starsMap).length,
     isStarred: state => restaurantId => state.starsMap[restaurantId],
-    userCheckinsByRestaurant: (state, getters) => rid => getters.userCheckins.filter(({ restaurantId }) => restaurantId === rid),
     starredData: state => {
       const starredRestaurantIds = Object.keys(state.starsMap);
       const starred =  Object.keys(state.dumplings)
@@ -48,23 +59,21 @@ const store = new Vuex.Store({
   },
   actions: {
     fetchUserProfile({ commit, state }) {
-      usersCollection.doc(state.currentUser.uid).get()
-        .then(res => {
-          let userData = res.data();
+      usersCollection.doc(state.currentUser.uid).onSnapshot(res => {
+        let userData = res.data();
 
-          if (!res.exists) {
-            const { displayName, photoURL, uid } = state.currentUser;
-            userData = { displayName, photoURL };
-            usersCollection.doc(uid).set(userData, { merge: true });
-          }
+        if (!res.exists) {
+          const { displayName, photoURL, uid } = state.currentUser;
+          userData = { displayName, photoURL };
+          usersCollection.doc(uid).set(userData, { merge: true });
+        }
 
-          commit('setUserProfile', userData);
-        })
-        .catch(err => console.error(err));
+        commit('setUserProfile', userData);
+      });
     },
     fetchDumplings({ commit }) {
       const fetcher = new Promise(resolve => {
-        if (Cookies.get('cached_dumplings_timer')) {
+        if (Cookies.get('cached_dumplings')) {
           console.log('STATUS: Get dumplings from cache.'); // eslint-disable-line
           return resolve(JSON.parse(localStorage.getItem('cached_dumplings')));
         }
@@ -89,13 +98,62 @@ const store = new Vuex.Store({
 
           console.log('STATUS: Dumplings loaded from firebase.'); //eslint-disable-line
           localStorage.setItem('cached_dumplings', JSON.stringify(dumplingMap));
-          Cookies.set('cached_dumplings_timer', 1, { expires: .5 });
+          Cookies.set('cached_dumplings', 1, { expires: .5 });
           resolve(dumplingMap);
         });
       });
 
-      fetcher.then(dumplings => commit('setDumplings', dumplings));
+      fetcher.then(dumplings => {
+        commit('setDumplingsLoaded', true);
+        commit('setDumplings', dumplings);
+      });
     },
+
+    fetchDumplingRatings({ commit, state }) {
+      const newDumplingMap = { ...state.dumplings };
+
+      dumplingsCollection.get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const { aggregateRating, checkinCount, restaurant } = doc.data();
+
+          if (!newDumplingMap[restaurant] || !newDumplingMap[restaurant].dumplings) {
+            return;
+          }
+
+          const newDumplings = [...newDumplingMap[restaurant].dumplings].map(dumpling => {
+            if (dumpling.id === doc.id) {
+              dumpling.checkinCount = checkinCount || 0;
+              dumpling.avgRating = checkinCount === 0 || checkinCount === undefined ? 0 : aggregateRating / checkinCount;
+            }
+            return dumpling;
+          });
+
+          newDumplingMap[restaurant].dumplings = newDumplings;
+        });
+      });
+
+      commit('setDumplings', newDumplingMap);
+    },
+
+    fetchMoreCheckins({ commit, state }) {
+      if (!state.oldestCheckin) {
+        return;
+      }
+
+      commit('setLoadingMoreCheckins', true);
+
+      checkinsCollection.orderBy('createdOn', 'desc').limit(checkinsPerPage).startAfter(state.oldestCheckin).get().then(querySnapshot => {
+        const incomingCheckinCount = querySnapshot.docs.length;
+        const nextCheckins = mapSnapshotToCheckins(querySnapshot);
+        const newCheckins = state.checkins.concat(nextCheckins);
+        const oldestCheckin = querySnapshot.docs[incomingCheckinCount - 1];
+        commit('setDisplayedCheckinCount', state.displayedCheckinCount + querySnapshot.docs.length);
+        commit('setLoadingMoreCheckins', false);
+        commit('setCheckins', newCheckins);
+        commit('setOldestCheckin', oldestCheckin);
+      });
+    },
+
     logout({ commit }) {
       commit('setCurrentUser', null);
       commit('setUserProfile', {});
@@ -111,6 +169,9 @@ const store = new Vuex.Store({
       commit('setCurrentRoute', null);
       document.body.classList.remove('fixed-scroll');
     },
+    incrementDisplayedCheckinCount({ commit, state }) {
+      commit('setDisplayedCheckinCount', state.displayedCheckinCount + 1);
+    },
   },
   mutations: {
     setCurrentUser(state, val) {
@@ -125,6 +186,15 @@ const store = new Vuex.Store({
         state.checkinsLoaded = true;
       }
     },
+    setUserCheckins(state, val) {
+      state.userCheckins = val;
+    },
+    setCheckinCount(state, val) {
+      state.checkinCount = val;
+    },
+    setDisplayedCheckinCount(state, val) {
+      state.displayedCheckinCount = val;
+    },
     setHiddenCheckins(state, val) {
       if (!val) {
         state.hiddenCheckins = [];
@@ -136,8 +206,14 @@ const store = new Vuex.Store({
         state.hiddenCheckins.unshift(val);
       }
     },
+    setOldestCheckin(state, val) {
+      state.oldestCheckin = val;
+    },
     setDumplings(state, val) {
       state.dumplings = val;
+    },
+    setDumplingsLoaded(state, val) {
+      state.dumplingsLoaded = val;
     },
     setLoggingDumpling(state, val) {
       state.loggingDumpling = val;
@@ -154,8 +230,12 @@ const store = new Vuex.Store({
     setCurrentRoute(state, val) {
       state.currentRoute = val;
     },
+    setLoadingMoreCheckins(state, val) {
+      state.loadingMoreCheckins = val;
+    },
   },
 });
+
 
 auth.onAuthStateChanged(user => {
   if (!user) {
@@ -165,33 +245,59 @@ auth.onAuthStateChanged(user => {
   store.commit('setCurrentUser', user);
   store.dispatch('fetchUserProfile');
 
-  checkinsCollection.orderBy('createdOn', 'desc').onSnapshot(querySnapshot => {
-    const docChanges = querySnapshot.docChanges();
-
-    // Check if the checkin is created by the current user.
-    let createdByCurrentUser;
-    if (querySnapshot.docs.length) {
-      createdByCurrentUser = user.uid === docChanges[0].doc.data().uid;
+  metaCollection.doc('counters').get().then(querySnapshot => {
+    if (!querySnapshot.exists) {
+      return;
     }
 
-    // Add new checkins to the hidden array after the initial load.
-    if (
-      (docChanges.length !== querySnapshot.docs.length)
-      && (docChanges[0].type === 'added')
-      && (!createdByCurrentUser)) {
-      const checkin = docChanges[0].doc.data();
-      checkin.id = docChanges[0].doc.id;
+    const { checkinCount } = querySnapshot.data();
+    store.commit('setCheckinCount', checkinCount);
+  });
 
-      store.commit('setHiddenCheckins', checkin);
-    } else {
-      const checkinsArray = [];
-      querySnapshot.forEach(doc => {
-        const checkin = { ...doc.data(), id: doc.id };
-        checkinsArray.push(checkin);
-      });
+  checkinsCollection.orderBy('createdOn', 'desc').limit(checkinsPerPage).get().then(querySnapshot => {
+    const hasDocs = querySnapshot.docs.length > 0;
+    const initialCheckins = hasDocs ? mapSnapshotToCheckins(querySnapshot) : [];
+    const latestCheckin = querySnapshot.docs[0];
+    let watcherQueryRef = checkinsCollection.orderBy('createdOn', 'desc');
 
-      store.commit('setCheckins', checkinsArray);
+    store.commit('setCheckins', initialCheckins);
+
+    if (hasDocs) {
+      watcherQueryRef = watcherQueryRef.endBefore(latestCheckin);
+
+      const oldestCheckin = querySnapshot.docs[querySnapshot.docs.length - 1];
+      store.commit('setOldestCheckin', oldestCheckin);
     }
+
+    watcherQueryRef.onSnapshot(newSnapshot => {
+      const docChanges = newSnapshot.docChanges();
+
+      if (newSnapshot.docs.length === 0 || docChanges[0].type !== 'added') {
+        return;
+      }
+
+      const newDoc = docChanges[0].doc;
+
+      // Check if the checkin is created by the current user.
+      const createdByCurrentUser = user.uid === newDoc.data().uid;
+      const newCheckin = { ...newDoc.data(), id: newDoc.id };
+      if (createdByCurrentUser) {
+        let newCheckins = store.state.checkins;
+        if (store.state.hiddenCheckins.length) {
+          newCheckins = store.state.hiddenCheckins.concat(newCheckins);
+        }
+        newCheckins.unshift(newCheckin);
+        store.commit('setCheckins', newCheckins);
+        store.commit('setHiddenCheckins');
+      } else {
+        store.commit('setHiddenCheckins', newCheckin);
+      }
+    });
+  });
+
+  checkinsCollection.orderBy('createdOn', 'desc').where('uid', '==', user.uid).onSnapshot(querySnapshot => {
+    const userCheckins = mapSnapshotToCheckins(querySnapshot);
+    store.commit('setUserCheckins', userCheckins);
   });
 
   commentsCollection.orderBy('createdOn', 'desc').onSnapshot(querySnapshot => {

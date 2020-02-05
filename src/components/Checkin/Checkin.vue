@@ -80,7 +80,7 @@ export default {
   transition: background-color .6s ease-in-out, opacity .2s ease-in-out;
   background-color: $c--white;
   position: relative;
-  padding: $spacing * 1.5 $spacing;
+  padding: $spacing $spacing $spacing * 1.5;
   margin-left: -$spacing;
   margin-right: -$spacing;
   border-radius: 6px;

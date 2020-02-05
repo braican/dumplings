@@ -1,5 +1,5 @@
 {
-  "name": "Dumplings",
+  "name": "Portland Dumpling Week Companion",
   "short_name": "Dumplings",
   "icons": [
     {
@@ -16,5 +16,5 @@
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ff0051"
+  "theme_color": "#333333"
 }
