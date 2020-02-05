@@ -27,9 +27,9 @@ const store = new Vuex.Store({
     dumplingsLoaded: false,
 
     checkins: [],
+    checkinsLoaded: false,
     hiddenCheckins: [],
     userCheckins: [],
-    checkinsLoaded: false,
     oldestCheckin: null,
     loadingMoreCheckins: false,
     checkinCount: 0,
@@ -49,13 +49,14 @@ const store = new Vuex.Store({
     userRestaurantCount: state => [... new Set(state.userCheckins.map(checkin => checkin.restaurantId)) ].length,
     starsCount: state => Object.keys(state.starsMap).length,
     isStarred: state => restaurantId => state.starsMap[restaurantId],
-    starredData: state => {
+    starredRestaurants: state => {
       const starredRestaurantIds = Object.keys(state.starsMap);
       const starred =  Object.keys(state.dumplings)
         .filter(restaurantId => starredRestaurantIds.includes(restaurantId))
-        .map(restaurantId => ({ ...state.dumplings[restaurantId], restaurantId }));
+        .map(id => ({ ...state.dumplings[id], id }));
       return starred;
     },
+    userHadStarsCount: state => Object.keys(state.starsMap).filter(restaurantId => state.userCheckins.filter(checkin => checkin.restaurantId === restaurantId).length > 0).length,
   },
   actions: {
     fetchUserProfile({ commit, state }) {

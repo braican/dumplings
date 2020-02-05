@@ -4,7 +4,7 @@
       The Dumplings of Dumpling Week
     </h2>
 
-    <p class="small-stats">
+    <p class="small-stats" :style="{opacity: checkinsLoaded ? '1' : '0'}">
       You've been to {{ userRestaurantCount }} of {{ Object.keys(dumplings).length }} restaurants
     </p>
 
@@ -28,7 +28,7 @@ export default {
   name: 'Dumplings',
   components: { DumplingListing },
   computed: {
-    ...mapState(['dumplings', 'dumplingsLoaded']),
+    ...mapState(['dumplings', 'dumplingsLoaded', 'checkinsLoaded']),
     ...mapGetters(['userRestaurantCount']),
   },
   watch: {
@@ -48,6 +48,7 @@ export default {
 @import '@/styles/_abstracts.scss';
 
 .small-stats {
+  @include transition(opacity);
   font-weight: $fw--bold;
   color: $c--primary;
   margin-top: $spacing;

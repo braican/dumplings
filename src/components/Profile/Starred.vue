@@ -1,10 +1,11 @@
 <template>
   <div class="stars">
-    <p class="messaging">
-      The list of dumplings that you're hoping to try during Dumpling Week:
+    <p class="starred-status">
+      You've had <span>{{ userHadStarsCount }}</span> of your <span>{{ starsCount }}</span> starred dumplings
     </p>
-    <ul v-if="starredData.length" class="starred-list">
-      <li v-for="starred in starredData" :key="starred.restaurantId">
+
+    <ul v-if="starsCount" class="starred-list">
+      <li v-for="starred in starredRestaurants" :key="starred.restaurantId">
         <DumplingListing :restaurant="starred" light />
       </li>
     </ul>
@@ -25,7 +26,7 @@ export default {
   name: 'UserStars',
   components: { DumplingListing },
   computed: {
-    ...mapGetters(['starredData']),
+    ...mapGetters(['starredRestaurants', 'starsCount', 'userHadStarsCount']),
   },
 };
 </script>
@@ -33,8 +34,13 @@ export default {
 <style lang="scss" scoped>
 @import '@/styles/_abstracts.scss';
 
-.messaging {
+.starred-status {
   margin-top: $spacing;
+  font-weight: $fw--bold;
+
+  span {
+    color: $c--primary;
+  }
 }
 
 .starred-list {

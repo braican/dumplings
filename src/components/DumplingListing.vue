@@ -14,7 +14,7 @@
         <span v-else>{{ restaurant.address }}</span>
       </p>
 
-      <div v-if="!light && checkins.length > 0" class="indicators indicator--had">
+      <div v-if="checkins.length > 0" class="indicators indicator--had">
         <DumplingIcon theme="red_fill" />
 
         <p class="label">
@@ -179,7 +179,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: .5em;
+  padding-top: $spacing--sm;
   padding-bottom: .5em;
   text-align: left;
 
