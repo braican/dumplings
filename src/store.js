@@ -286,14 +286,16 @@ auth.onAuthStateChanged(user => {
 
   checkinsCollection
     .orderBy('createdOn', 'desc')
-    .where('year', '==', 2021)
+    .where('createdOn', '>', new Date('01/01/2021'))
     .limit(checkinsPerPage)
     .get()
     .then(querySnapshot => {
       const hasDocs = querySnapshot.docs.length > 0;
       const initialCheckins = hasDocs ? mapSnapshotToCheckins(querySnapshot) : [];
       const latestCheckin = querySnapshot.docs[0];
-      let watcherQueryRef = checkinsCollection.orderBy('createdOn', 'desc');
+      let watcherQueryRef = checkinsCollection
+        .orderBy('createdOn', 'desc')
+        .where('createdOn', '>', new Date('01/01/2021'));
 
       store.commit('setCheckins', initialCheckins);
 
