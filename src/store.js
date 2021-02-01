@@ -164,6 +164,7 @@ const store = new Vuex.Store({
 
       checkinsCollection
         .orderBy('createdOn', 'desc')
+        .where('createdOn', '>', new Date('01/01/2021'))
         .limit(checkinsPerPage)
         .startAfter(state.oldestCheckin)
         .get()
@@ -335,6 +336,7 @@ auth.onAuthStateChanged(user => {
   checkinsCollection
     .orderBy('createdOn', 'desc')
     .where('uid', '==', user.uid)
+    .where('createdOn', '>', new Date('01/01/2021'))
     .onSnapshot(querySnapshot => {
       const userCheckins = mapSnapshotToCheckins(querySnapshot);
       store.commit('setUserCheckins', userCheckins);
@@ -357,14 +359,17 @@ auth.onAuthStateChanged(user => {
     store.commit('setCommentMap', commentMap);
   });
 
-  starsCollection.where('uid', '==', user.uid).onSnapshot(querySnapshot => {
-    const starsMap = {};
-    querySnapshot.forEach(doc => {
-      const { restaurant } = doc.data();
-      starsMap[restaurant] = doc.id;
+  starsCollection
+    .where('uid', '==', user.uid)
+    .where('year', '==', 2021)
+    .onSnapshot(querySnapshot => {
+      const starsMap = {};
+      querySnapshot.forEach(doc => {
+        const { restaurant } = doc.data();
+        starsMap[restaurant] = doc.id;
+      });
+      store.commit('setStars', starsMap);
     });
-    store.commit('setStars', starsMap);
-  });
 });
 
 export default store;

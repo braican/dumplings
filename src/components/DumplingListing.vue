@@ -110,7 +110,7 @@ export default {
       if (this.isStarred) {
         starsCollection.doc(this.isStarred).delete();
       } else {
-        starsCollection.add({ uid: this.currentUser.uid, restaurant: this.restaurant.id });
+        starsCollection.add({ uid: this.currentUser.uid, restaurant: this.restaurant.id, year: 2021 });
       }
     },
   },
