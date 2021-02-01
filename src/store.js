@@ -87,33 +87,37 @@ const store = new Vuex.Store({
 
         console.log('STATUS: Load dumplings from db.'); // eslint-disable-line
 
-        const restaurantsQuery = restaurantsCollection.orderBy('name').get();
-        const dumplingsQuery = dumplingsCollection.get();
         const dumplingMap = {};
 
-        Promise.all([restaurantsQuery, dumplingsQuery]).then(
-          ([restaurantsSnapshot, dumplingsSnapshot]) => {
-            restaurantsSnapshot.forEach(doc => {
-              dumplingMap[doc.id] = { ...doc.data(), dumplings: [] };
-            });
-            dumplingsSnapshot.forEach(doc => {
-              const { restaurant, description } = doc.data();
+        dumplingsCollection
+          .where('year', '==', 2021)
+          .get()
+          .then(snap => {
+            const restaurantPromises = [];
+            snap.forEach(doc => {
+              const { description, restaurant } = doc.data();
+              const dumpData = { id: doc.id, description, restaurant };
+
+              restaurantPromises.push(restaurantsCollection.doc(restaurant).get());
 
               if (dumplingMap[restaurant]) {
-                dumplingMap[restaurant].dumplings.push({
-                  id: doc.id,
-                  description,
-                  restaurant,
-                });
+                dumplingMap[restaurant].dumplings.push(dumpData);
+              } else {
+                dumplingMap[restaurant] = { dumplings: [dumpData] };
               }
             });
 
-            console.log('STATUS: Dumplings loaded from firebase.'); //eslint-disable-line
-            localStorage.setItem('cached_dumplings', JSON.stringify(dumplingMap));
-            Cookies.set('cached_dumplings', 1, { expires: 0.5 });
-            resolve(dumplingMap);
-          },
-        );
+            return restaurantPromises;
+          })
+          .then(promises => {
+            Promise.all(promises).then(snaps => {
+              snaps.forEach(doc => {
+                dumplingMap[doc.id] = { ...dumplingMap[doc.id], ...doc.data() };
+              });
+
+              resolve(dumplingMap);
+            });
+          });
       });
 
       fetcher.then(dumplings => {
@@ -282,6 +286,7 @@ auth.onAuthStateChanged(user => {
 
   checkinsCollection
     .orderBy('createdOn', 'desc')
+    .where('year', '==', 2021)
     .limit(checkinsPerPage)
     .get()
     .then(querySnapshot => {
