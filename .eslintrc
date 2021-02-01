@@ -1,10 +1,17 @@
 {
-  "extends": "@upstatement/eslint-config/vue",
+  "extends": [
+    "@upstatement/eslint-config/vue",
+    "prettier",
+    "prettier/vue"
+  ],
   "parser": "vue-eslint-parser",
   "parserOptions": {
     "parser": "babel-eslint",
     "ecmaVersion": 8,
     "sourceType": "module",
     "allowImportExportEverywhere": true
-  }
+  },
+  "plugins": [
+    "vue"
+  ]
 }
