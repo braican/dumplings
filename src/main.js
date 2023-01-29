@@ -6,6 +6,7 @@ import store from './store';
 import './registerServiceWorker';
 import './filters';
 import { auth } from './firebase';
+import { mapsApiKey } from './config';
 
 import './styles/globals.scss';
 
@@ -13,7 +14,7 @@ Vue.config.productionTip = false;
 
 Vue.use(VueGoogleMaps, {
   load: {
-    key: 'AIzaSyDnDMSouYuJePeji9oKkjJZ_AsH2NIgw1o',
+    key: mapsApiKey,
   },
 });
 
