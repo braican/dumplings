@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Cookies from 'js-cookie';
 
 import {
   auth,
@@ -16,6 +15,8 @@ import {
 import { mapSnapshotToCheckins } from '@/util';
 
 export const checkinsPerPage = 10;
+
+const CACHE_KEY = 'cached_dumplings_2023';
 
 Vue.use(Vuex);
 
@@ -78,9 +79,10 @@ const store = new Vuex.Store({
     },
     fetchDumplings({ commit }) {
       const fetcher = new Promise(resolve => {
-        if (Cookies.get('cached_dumplings')) {
+        const cachedValue = localStorage.getItem(CACHE_KEY);
+        if (cachedValue) {
           console.log('STATUS: Get dumplings from cache.'); // eslint-disable-line
-          return resolve(JSON.parse(localStorage.getItem('cached_dumplings')));
+          return resolve(JSON.parse(cachedValue));
         }
 
         console.log('STATUS: Load dumplings from db.'); // eslint-disable-line
@@ -117,6 +119,7 @@ const store = new Vuex.Store({
                 }))
                 .sort((a, b) => (a.name > b.name ? 1 : -1));
 
+              localStorage.setItem(CACHE_KEY, JSON.stringify(dumps));
               resolve(dumps);
             });
           });
