@@ -9,8 +9,8 @@
     </p>
 
     <ul v-if="Object.keys(dumplings).length" class="dumpling-list">
-      <li v-for="(entry, restaurantId) in dumplings" :key="restaurantId">
-        <DumplingListing :restaurant="{...entry, id: restaurantId}" />
+      <li v-for="entry in dumplings" :key="entry.id">
+        <DumplingListing :restaurant="entry" />
       </li>
     </ul>
 
@@ -57,4 +57,3 @@ export default {
   margin-top: $spacing;
 }
 </style>
-

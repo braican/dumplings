@@ -23,7 +23,7 @@ const store = new Vuex.Store({
   state: {
     currentUser: null,
     userProfile: {},
-    dumplings: {},
+    dumplings: [],
     dumplingsLoaded: false,
 
     checkins: [],
@@ -53,9 +53,7 @@ const store = new Vuex.Store({
     isStarred: state => restaurantId => state.starsMap[restaurantId],
     starredData: state => {
       const starredRestaurantIds = Object.keys(state.starsMap);
-      const starred = Object.keys(state.dumplings)
-        .filter(restaurantId => starredRestaurantIds.includes(restaurantId))
-        .map(restaurantId => ({ ...state.dumplings[restaurantId], restaurantId }));
+      const starred = state.dumplings.filter(({ id }) => starredRestaurantIds.includes(id));
       return starred;
     },
     userHadStarsCount: state =>
@@ -90,7 +88,7 @@ const store = new Vuex.Store({
         const dumplingMap = {};
 
         dumplingsCollection
-          .where('year', '==', 2021)
+          .where('year', '==', 2023)
           .get()
           .then(snap => {
             const restaurantPromises = [];
@@ -111,11 +109,15 @@ const store = new Vuex.Store({
           })
           .then(promises => {
             Promise.all(promises).then(snaps => {
-              snaps.forEach(doc => {
-                dumplingMap[doc.id] = { ...dumplingMap[doc.id], ...doc.data() };
-              });
+              const dumps = snaps
+                .map(doc => ({
+                  ...dumplingMap[doc.id],
+                  ...doc.data(),
+                  id: doc.id,
+                }))
+                .sort((a, b) => (a.name > b.name ? 1 : -1));
 
-              resolve(dumplingMap);
+              resolve(dumps);
             });
           });
       });

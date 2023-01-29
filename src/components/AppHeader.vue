@@ -5,13 +5,13 @@
     </div>
 
     <h1 class="headline">
-      PDX Dumpling Week 2020
+      PDX Dumpling Week 2023
     </h1>
   </header>
 </template>
 
 <script>
-import Logo from  '@/svg/dumplings';
+import Logo from '@/svg/dumplings';
 
 export default {
   name: 'AppHeader',
@@ -52,5 +52,4 @@ export default {
   color: $c--primary;
   font-family: $ff--headline;
 }
-
 </style>
