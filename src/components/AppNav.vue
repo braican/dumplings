@@ -22,13 +22,16 @@
           </NavIcon>
         </router-link>
       </li>
+      <li>
+        <router-link to="/map" class="navlink">
+          <NavIcon :icon="iconMap">
+            Map
+          </NavIcon>
+        </router-link>
+      </li>
     </ul>
 
-    <button
-      v-if="!commenting"
-      class="log-dumpling"
-      @click="logDumpling"
-    >
+    <button v-if="!commenting" class="log-dumpling" @click="logDumpling">
       <div class="icon">
         <IconPlus />
       </div>
@@ -44,6 +47,7 @@ import IconHome from '@/svg/iconHome';
 import IconList from '@/svg/iconList';
 import IconUser from '@/svg/iconUser';
 import IconPlus from '@/svg/iconPlus';
+import IconMap from '@/svg/iconMap';
 
 export default {
   name: 'AppNav',
@@ -53,6 +57,7 @@ export default {
     iconHome: () => IconHome,
     iconList: () => IconList,
     iconUser: () => IconUser,
+    iconMap: () => IconMap,
   },
   methods: {
     logDumpling() {
@@ -75,21 +80,22 @@ export default {
   z-index: 2;
   display: flex;
   box-shadow: 0 7px 12px $c--black;
-  padding-right: 90px;
-  padding-right: calc(58px + #{$spacing--sm * 2});
+  padding-right: calc(58px + 1rem + #{$spacing--sm});
 
-   li {
+  li {
     flex: 1;
-   }
+  }
 
-   @include mq($bp--mobile) {
-     top: 0;
-     left: auto;
-     bottom: auto;
-     box-shadow: none;
-     padding-right: 0;
-     box-shadow: 0 0 20px rgba($c--black, .2);
-   }
+  @include mq($bp--mobile) {
+    top: 0;
+    left: auto;
+    bottom: auto;
+    box-shadow: none;
+    padding-right: 0;
+    box-shadow: 0 0 20px rgba($c--black, 0.2);
+    border-radius: 0 0 0 8px;
+    overflow: hidden;
+  }
 }
 
 .navlink {
@@ -97,7 +103,7 @@ export default {
   text-decoration: none;
   display: block;
   text-align: center;
-  padding: 8px .6rem;
+  padding: 8px 0.6rem;
   margin: auto;
   background-color: $c--white;
 
@@ -122,13 +128,12 @@ export default {
   background-color: $c--primary;
   border-radius: 100%;
   padding: 10px;
-  box-shadow: 0px 0px 10px rgba($c--black, .5);
+  box-shadow: 0px 0px 10px rgba($c--black, 0.5);
 
   svg {
     display: block;
     width: 100%;
-    fill: $c--white
+    fill: $c--white;
   }
 }
-
 </style>

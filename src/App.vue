@@ -1,11 +1,10 @@
 <template>
-  <div
-    id="app"
-    :class="[loggingDumpling && 'logging-dumpling', 'app-frame']"
-  >
+  <div id="app" :class="[loggingDumpling && 'logging-dumpling', 'app-frame']">
     <AppHeader v-if="isAuth" />
 
-    <main :class="['main', isAuth && 'main--logged-in']">
+    <main
+      :class="['main', isAuth && 'main--logged-in', `route--${currentRouteName.toLowerCase()}`]"
+    >
       <router-view />
     </main>
 
@@ -29,6 +28,9 @@ export default {
     isAuth() {
       return this.currentUser !== null;
     },
+    currentRouteName() {
+      return this.$route.name;
+    },
   },
 };
 </script>
@@ -39,7 +41,7 @@ export default {
 .main {
   display: block;
 
-  &--logged-in {
+  &:not(.route--map).main--logged-in {
     padding: 44px $spacing $spacing * 4 80px;
     padding: 44px $spacing $spacing * 4 calc(#{$spacing} + 44px);
     max-width: 660px;
@@ -50,5 +52,4 @@ export default {
     }
   }
 }
-
 </style>

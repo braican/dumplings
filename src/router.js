@@ -6,8 +6,9 @@ import { adminEmail } from './config';
 import Home from './views/Home';
 import Feed from './views/Feed';
 import Dumplings from './views/Dumplings';
-import Admin from './views/Admin';
 import User from './views/User';
+import Map from './views/Map';
+import Admin from './views/Admin';
 
 import store from './store';
 
@@ -53,7 +54,14 @@ const router = new Router({
         requiresAuth: true,
       },
     },
-
+    {
+      path: '/map',
+      name: 'Map',
+      component: Map,
+      meta: {
+        requiresAuth: true,
+      },
+    },
     {
       path: '/admin',
       name: 'Admin',
@@ -74,7 +82,7 @@ router.beforeEach((to, from, next) => {
   if (store.state.currentRoute) {
     next(store.state.currentRoute.path);
   } else if (requiresAdmin && (!currentUser || currentUser.email !== adminEmail)) {
-  // if (requiresAdmin && (!currentUser || currentUser.email !== adminEmail)) {
+    // if (requiresAdmin && (!currentUser || currentUser.email !== adminEmail)) {
     next('/feed');
   } else if (requiresAuth && !currentUser) {
     next('/');

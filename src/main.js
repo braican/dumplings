@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import * as VueGoogleMaps from 'vue2-google-maps';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -9,6 +10,12 @@ import { auth } from './firebase';
 import './styles/globals.scss';
 
 Vue.config.productionTip = false;
+
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyDnDMSouYuJePeji9oKkjJZ_AsH2NIgw1o',
+  },
+});
 
 let app;
 auth.onAuthStateChanged(() => {
