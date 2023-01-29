@@ -23,4 +23,3 @@ auth.onAuthStateChanged(() => {
     }).$mount('#app');
   }
 });
-

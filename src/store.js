@@ -45,17 +45,24 @@ const store = new Vuex.Store({
     currentRoute: null,
   },
   getters: {
-    userCheckinsByRestaurant: state => rid => state.userCheckins.filter(({ restaurantId }) => restaurantId === rid),
-    userRestaurantCount: state => [... new Set(state.userCheckins.map(checkin => checkin.restaurantId)) ].length,
+    userCheckinsByRestaurant: state => rid =>
+      state.userCheckins.filter(({ restaurantId }) => restaurantId === rid),
+    userRestaurantCount: state =>
+      [...new Set(state.userCheckins.map(checkin => checkin.restaurantId))].length,
     starsCount: state => Object.keys(state.starsMap).length,
     isStarred: state => restaurantId => state.starsMap[restaurantId],
     starredData: state => {
       const starredRestaurantIds = Object.keys(state.starsMap);
-      const starred =  Object.keys(state.dumplings)
+      const starred = Object.keys(state.dumplings)
         .filter(restaurantId => starredRestaurantIds.includes(restaurantId))
         .map(restaurantId => ({ ...state.dumplings[restaurantId], restaurantId }));
       return starred;
     },
+    userHadStarsCount: state =>
+      Object.keys(state.starsMap).filter(
+        restaurantId =>
+          state.userCheckins.filter(checkin => checkin.restaurantId === restaurantId).length > 0,
+      ).length,
   },
   actions: {
     fetchUserProfile({ commit, state }) {
@@ -80,27 +87,37 @@ const store = new Vuex.Store({
 
         console.log('STATUS: Load dumplings from db.'); // eslint-disable-line
 
-        const restaurantsQuery = restaurantsCollection.orderBy('name').get();
-        const dumplingsQuery = dumplingsCollection.get();
         const dumplingMap = {};
 
-        Promise.all([restaurantsQuery, dumplingsQuery]).then(([restaurantsSnapshot, dumplingsSnapshot]) => {
-          restaurantsSnapshot.forEach(doc => {
-            dumplingMap[doc.id] = { ...doc.data(), dumplings: [] };
-          });
-          dumplingsSnapshot.forEach(doc => {
-            const { restaurant, description } = doc.data();
+        dumplingsCollection
+          .where('year', '==', 2021)
+          .get()
+          .then(snap => {
+            const restaurantPromises = [];
+            snap.forEach(doc => {
+              const { description, restaurant } = doc.data();
+              const dumpData = { id: doc.id, description, restaurant };
 
-            if (dumplingMap[restaurant]) {
-              dumplingMap[restaurant].dumplings.push({ id: doc.id, description, restaurant });
-            }
-          });
+              restaurantPromises.push(restaurantsCollection.doc(restaurant).get());
 
-          console.log('STATUS: Dumplings loaded from firebase.'); //eslint-disable-line
-          localStorage.setItem('cached_dumplings', JSON.stringify(dumplingMap));
-          Cookies.set('cached_dumplings', 1, { expires: .5 });
-          resolve(dumplingMap);
-        });
+              if (dumplingMap[restaurant]) {
+                dumplingMap[restaurant].dumplings.push(dumpData);
+              } else {
+                dumplingMap[restaurant] = { dumplings: [dumpData] };
+              }
+            });
+
+            return restaurantPromises;
+          })
+          .then(promises => {
+            Promise.all(promises).then(snaps => {
+              snaps.forEach(doc => {
+                dumplingMap[doc.id] = { ...dumplingMap[doc.id], ...doc.data() };
+              });
+
+              resolve(dumplingMap);
+            });
+          });
       });
 
       fetcher.then(dumplings => {
@@ -123,7 +140,10 @@ const store = new Vuex.Store({
           const newDumplings = [...newDumplingMap[restaurant].dumplings].map(dumpling => {
             if (dumpling.id === doc.id) {
               dumpling.checkinCount = checkinCount || 0;
-              dumpling.avgRating = checkinCount === 0 || checkinCount === undefined ? 0 : aggregateRating / checkinCount;
+              dumpling.avgRating =
+                checkinCount === 0 || checkinCount === undefined
+                  ? 0
+                  : aggregateRating / checkinCount;
             }
             return dumpling;
           });
@@ -142,16 +162,25 @@ const store = new Vuex.Store({
 
       commit('setLoadingMoreCheckins', true);
 
-      checkinsCollection.orderBy('createdOn', 'desc').limit(checkinsPerPage).startAfter(state.oldestCheckin).get().then(querySnapshot => {
-        const incomingCheckinCount = querySnapshot.docs.length;
-        const nextCheckins = mapSnapshotToCheckins(querySnapshot);
-        const newCheckins = state.checkins.concat(nextCheckins);
-        const oldestCheckin = querySnapshot.docs[incomingCheckinCount - 1];
-        commit('setDisplayedCheckinCount', state.displayedCheckinCount + querySnapshot.docs.length);
-        commit('setLoadingMoreCheckins', false);
-        commit('setCheckins', newCheckins);
-        commit('setOldestCheckin', oldestCheckin);
-      });
+      checkinsCollection
+        .orderBy('createdOn', 'desc')
+        .where('createdOn', '>', new Date('01/01/2021'))
+        .limit(checkinsPerPage)
+        .startAfter(state.oldestCheckin)
+        .get()
+        .then(querySnapshot => {
+          const incomingCheckinCount = querySnapshot.docs.length;
+          const nextCheckins = mapSnapshotToCheckins(querySnapshot);
+          const newCheckins = state.checkins.concat(nextCheckins);
+          const oldestCheckin = querySnapshot.docs[incomingCheckinCount - 1];
+          commit(
+            'setDisplayedCheckinCount',
+            state.displayedCheckinCount + querySnapshot.docs.length,
+          );
+          commit('setLoadingMoreCheckins', false);
+          commit('setCheckins', newCheckins);
+          commit('setOldestCheckin', oldestCheckin);
+        });
     },
 
     logout({ commit }) {
@@ -236,7 +265,6 @@ const store = new Vuex.Store({
   },
 });
 
-
 auth.onAuthStateChanged(user => {
   if (!user) {
     return;
@@ -245,60 +273,74 @@ auth.onAuthStateChanged(user => {
   store.commit('setCurrentUser', user);
   store.dispatch('fetchUserProfile');
 
-  metaCollection.doc('counters').get().then(querySnapshot => {
-    if (!querySnapshot.exists) {
-      return;
-    }
-
-    const { checkinCount } = querySnapshot.data();
-    store.commit('setCheckinCount', checkinCount);
-  });
-
-  checkinsCollection.orderBy('createdOn', 'desc').limit(checkinsPerPage).get().then(querySnapshot => {
-    const hasDocs = querySnapshot.docs.length > 0;
-    const initialCheckins = hasDocs ? mapSnapshotToCheckins(querySnapshot) : [];
-    const latestCheckin = querySnapshot.docs[0];
-    let watcherQueryRef = checkinsCollection.orderBy('createdOn', 'desc');
-
-    store.commit('setCheckins', initialCheckins);
-
-    if (hasDocs) {
-      watcherQueryRef = watcherQueryRef.endBefore(latestCheckin);
-
-      const oldestCheckin = querySnapshot.docs[querySnapshot.docs.length - 1];
-      store.commit('setOldestCheckin', oldestCheckin);
-    }
-
-    watcherQueryRef.onSnapshot(newSnapshot => {
-      const docChanges = newSnapshot.docChanges();
-
-      if (newSnapshot.docs.length === 0 || docChanges[0].type !== 'added') {
+  metaCollection
+    .doc('counters')
+    .get()
+    .then(querySnapshot => {
+      if (!querySnapshot.exists) {
         return;
       }
 
-      const newDoc = docChanges[0].doc;
-
-      // Check if the checkin is created by the current user.
-      const createdByCurrentUser = user.uid === newDoc.data().uid;
-      const newCheckin = { ...newDoc.data(), id: newDoc.id };
-      if (createdByCurrentUser) {
-        let newCheckins = store.state.checkins;
-        if (store.state.hiddenCheckins.length) {
-          newCheckins = store.state.hiddenCheckins.concat(newCheckins);
-        }
-        newCheckins.unshift(newCheckin);
-        store.commit('setCheckins', newCheckins);
-        store.commit('setHiddenCheckins');
-      } else {
-        store.commit('setHiddenCheckins', newCheckin);
-      }
+      const { checkinCount } = querySnapshot.data();
+      store.commit('setCheckinCount', checkinCount);
     });
-  });
 
-  checkinsCollection.orderBy('createdOn', 'desc').where('uid', '==', user.uid).onSnapshot(querySnapshot => {
-    const userCheckins = mapSnapshotToCheckins(querySnapshot);
-    store.commit('setUserCheckins', userCheckins);
-  });
+  checkinsCollection
+    .orderBy('createdOn', 'desc')
+    .where('createdOn', '>', new Date('01/01/2021'))
+    .limit(checkinsPerPage)
+    .get()
+    .then(querySnapshot => {
+      const hasDocs = querySnapshot.docs.length > 0;
+      const initialCheckins = hasDocs ? mapSnapshotToCheckins(querySnapshot) : [];
+      const latestCheckin = querySnapshot.docs[0];
+      let watcherQueryRef = checkinsCollection
+        .orderBy('createdOn', 'desc')
+        .where('createdOn', '>', new Date('01/01/2021'));
+
+      store.commit('setCheckins', initialCheckins);
+
+      if (hasDocs) {
+        watcherQueryRef = watcherQueryRef.endBefore(latestCheckin);
+
+        const oldestCheckin = querySnapshot.docs[querySnapshot.docs.length - 1];
+        store.commit('setOldestCheckin', oldestCheckin);
+      }
+
+      watcherQueryRef.onSnapshot(newSnapshot => {
+        const docChanges = newSnapshot.docChanges();
+
+        if (newSnapshot.docs.length === 0 || docChanges[0].type !== 'added') {
+          return;
+        }
+
+        const newDoc = docChanges[0].doc;
+
+        // Check if the checkin is created by the current user.
+        const createdByCurrentUser = user.uid === newDoc.data().uid;
+        const newCheckin = { ...newDoc.data(), id: newDoc.id };
+        if (createdByCurrentUser) {
+          let newCheckins = store.state.checkins;
+          if (store.state.hiddenCheckins.length) {
+            newCheckins = store.state.hiddenCheckins.concat(newCheckins);
+          }
+          newCheckins.unshift(newCheckin);
+          store.commit('setCheckins', newCheckins);
+          store.commit('setHiddenCheckins');
+        } else {
+          store.commit('setHiddenCheckins', newCheckin);
+        }
+      });
+    });
+
+  checkinsCollection
+    .orderBy('createdOn', 'desc')
+    .where('uid', '==', user.uid)
+    .where('createdOn', '>', new Date('01/01/2021'))
+    .onSnapshot(querySnapshot => {
+      const userCheckins = mapSnapshotToCheckins(querySnapshot);
+      store.commit('setUserCheckins', userCheckins);
+    });
 
   commentsCollection.orderBy('createdOn', 'desc').onSnapshot(querySnapshot => {
     const commentMap = {};
@@ -317,15 +359,17 @@ auth.onAuthStateChanged(user => {
     store.commit('setCommentMap', commentMap);
   });
 
-  starsCollection.where('uid', '==', user.uid).onSnapshot(querySnapshot => {
-    const starsMap = {};
-    querySnapshot.forEach(doc => {
-      const { restaurant } = doc.data();
-      starsMap[restaurant] = doc.id;
+  starsCollection
+    .where('uid', '==', user.uid)
+    .where('year', '==', 2021)
+    .onSnapshot(querySnapshot => {
+      const starsMap = {};
+      querySnapshot.forEach(doc => {
+        const { restaurant } = doc.data();
+        starsMap[restaurant] = doc.id;
+      });
+      store.commit('setStars', starsMap);
     });
-    store.commit('setStars', starsMap);
-  });
-
 });
 
 export default store;

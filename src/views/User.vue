@@ -2,28 +2,33 @@
   <div class="user">
     <div class="header">
       <div v-if="checkinsLoaded" class="headshot">
-        <img :src="userProfile.photoURL" :alt="`Avatar for ${userProfile.displayName}`">
+        <img :src="userProfile.photoURL" :alt="`Avatar for ${userProfile.displayName}`" />
       </div>
       <h2 class="section-header section-header--color">
         {{ userProfile.displayName }}
       </h2>
+      <button class="logout meta-info" @click="logout">
+        Log out
+      </button>
     </div>
 
-    <button class="logout meta-info" @click="logout">
-      Log out
-    </button>
-
     <div v-if="checkinsLoaded">
-      <Overview class="section" @updateView="newView => view = newView" />
+      <Overview class="section" @updateView="newView => (view = newView)" />
 
       <ul class="profile-nav section">
         <li>
-          <button :class="['profile-nav-button', view === 'activity' && 'profile-nav-button--active']" @click="view = 'activity'">
+          <button
+            :class="['profile-nav-button', view === 'activity' && 'profile-nav-button--active']"
+            @click="view = 'activity'"
+          >
             Activity
           </button>
         </li>
         <li>
-          <button :class="['profile-nav-button', view === 'starred' && 'profile-nav-button--active']" @click="view = 'starred'">
+          <button
+            :class="['profile-nav-button', view === 'starred' && 'profile-nav-button--active']"
+            @click="view = 'starred'"
+          >
             Starred
           </button>
         </li>
@@ -92,6 +97,12 @@ export default {
   position: absolute;
   top: $spacing--sm;
   right: $spacing--sm;
+
+  @include mq($bp--mobile) {
+    position: static;
+    display: block;
+    margin-left: $spacing;
+  }
 }
 
 .section {
@@ -108,7 +119,7 @@ export default {
 
 .profile-nav-button {
   font-family: $ff--headline;
-  opacity: .2;
+  opacity: 0.2;
 
   &:focus {
     outline: none;
@@ -120,5 +131,4 @@ export default {
     font-size: $fz--lg;
   }
 }
-
 </style>
