@@ -8,8 +8,6 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "core-js": "^2.6.5",
-    "eslint-config-prettier": "^6.10.0",
     "firebase": "^7.7.0",
     "google-maps": "^4.2.3",
     "js-cookie": "^2.2.1",
@@ -30,6 +28,7 @@
     "@vue/eslint-config-prettier": "^5.0.0",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-vue": "^6.1.2",
     "node-sass": "^7.0.0",
