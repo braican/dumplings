@@ -16,7 +16,7 @@ import { mapSnapshotToCheckins } from '@/util';
 
 export const checkinsPerPage = 10;
 
-const CACHE_KEY = 'cached_dumplings_2023';
+const CACHE_KEY = 'cached_dumplings_2023_1';
 
 Vue.use(Vuex);
 
@@ -24,7 +24,7 @@ const store = new Vuex.Store({
   state: {
     currentUser: null,
     userProfile: {},
-    dumplings: [],
+    dumplings: {},
     dumplingsLoaded: false,
 
     checkins: [],
@@ -54,7 +54,10 @@ const store = new Vuex.Store({
     isStarred: state => restaurantId => state.starsMap[restaurantId],
     starredData: state => {
       const starredRestaurantIds = Object.keys(state.starsMap);
-      const starred = state.dumplings.filter(({ id }) => starredRestaurantIds.includes(id));
+      const starred = Object.keys(state.dumplings)
+        .filter(restaurantId => starredRestaurantIds.includes(restaurantId))
+        .map(restaurantId => ({ ...state.dumplings[restaurantId], restaurantId }))
+        .sort((a, b) => (a.name > b.name ? 1 : -1));
       return starred;
     },
     userHadStarsCount: state =>
@@ -62,6 +65,8 @@ const store = new Vuex.Store({
         restaurantId =>
           state.userCheckins.filter(checkin => checkin.restaurantId === restaurantId).length > 0,
       ).length,
+    alphabeticalDumplings: state =>
+      Object.values(state.dumplings).sort((a, b) => (a.name > b.name ? 1 : -1)),
   },
   actions: {
     fetchUserProfile({ commit, state }) {
@@ -111,16 +116,11 @@ const store = new Vuex.Store({
           })
           .then(promises => {
             Promise.all(promises).then(snaps => {
-              const dumps = snaps
-                .map(doc => ({
-                  ...dumplingMap[doc.id],
-                  ...doc.data(),
-                  id: doc.id,
-                }))
-                .sort((a, b) => (a.name > b.name ? 1 : -1));
-
-              localStorage.setItem(CACHE_KEY, JSON.stringify(dumps));
-              resolve(dumps);
+              snaps.forEach(doc => {
+                dumplingMap[doc.id] = { ...dumplingMap[doc.id], ...doc.data(), id: doc.id };
+              });
+              localStorage.setItem(CACHE_KEY, JSON.stringify(dumplingMap));
+              resolve(dumplingMap);
             });
           });
       });
