@@ -21,6 +21,7 @@
           google && new google.maps.LatLng(entry.geopoint.latitude, entry.geopoint.longitude)
         "
         :clickable="true"
+        :icon="getIcon(entry)"
         @click="toggleInfoWindow(entry)"
       />
     </GmapMap>
@@ -48,7 +49,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['dumplings', 'dumplingsLoaded']),
+    ...mapState(['dumplings', 'dumplingsLoaded', 'userCheckins', 'starsMap']),
     google: gmapApi,
   },
   methods: {
@@ -68,6 +69,33 @@ export default {
         this.infoWinOpen = true;
         this.currentMidx = marker;
       }
+    },
+    getIcon: function(dumpling) {
+      const hasBeen = this.userCheckins.find(ch => ch.restaurantId === dumpling.id);
+      const isStarred = this.starsMap[dumpling.id];
+
+      if (hasBeen) {
+        return {
+          path:
+            'M9.984 17.016l9-9-1.406-1.453-7.594 7.594-3.563-3.563-1.406 1.406zM12 2.016q4.125 0 7.055 2.93t2.93 7.055-2.93 7.055-7.055 2.93-7.055-2.93-2.93-7.055 2.93-7.055 7.055-2.93z',
+          strokeWeight: 0,
+          fillOpacity: 1,
+          fillColor: 'green',
+        };
+      }
+
+      if (isStarred) {
+        return {
+          path:
+            'M12 17.25l-6.188 3.75 1.641-7.031-5.438-4.734 7.172-0.609 2.813-6.609 2.813 6.609 7.172 0.609-5.438 4.734 1.641 7.031z',
+          strokeWeight: 1,
+          strokeColor: '#000',
+          fillOpacity: 1,
+          fillColor: '#e1ad01',
+        };
+      }
+
+      return null;
     },
   },
 };
