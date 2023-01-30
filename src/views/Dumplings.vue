@@ -8,9 +8,9 @@
       You've been to {{ userRestaurantCount }} of {{ Object.keys(dumplings).length }} restaurants
     </p>
 
-    <ul v-if="Object.keys(dumplings).length" class="dumpling-list">
-      <li v-for="(entry, restaurantId) in dumplings" :key="restaurantId">
-        <DumplingListing :restaurant="{...entry, id: restaurantId}" />
+    <ul v-if="alphabeticalDumplings.length" class="dumpling-list">
+      <li v-for="entry in alphabeticalDumplings" :key="entry.id">
+        <DumplingListing :restaurant="entry" />
       </li>
     </ul>
 
@@ -29,7 +29,7 @@ export default {
   components: { DumplingListing },
   computed: {
     ...mapState(['dumplings', 'dumplingsLoaded']),
-    ...mapGetters(['userRestaurantCount']),
+    ...mapGetters(['userRestaurantCount', 'alphabeticalDumplings']),
   },
   watch: {
     dumplingsLoaded: {
@@ -57,4 +57,3 @@ export default {
   margin-top: $spacing;
 }
 </style>
-

@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Cookies from 'js-cookie';
 
 import {
   auth,
@@ -16,6 +15,8 @@ import {
 import { mapSnapshotToCheckins } from '@/util';
 
 export const checkinsPerPage = 10;
+
+const CACHE_KEY = 'cached_dumplings_2023_1';
 
 Vue.use(Vuex);
 
@@ -55,7 +56,8 @@ const store = new Vuex.Store({
       const starredRestaurantIds = Object.keys(state.starsMap);
       const starred = Object.keys(state.dumplings)
         .filter(restaurantId => starredRestaurantIds.includes(restaurantId))
-        .map(restaurantId => ({ ...state.dumplings[restaurantId], restaurantId }));
+        .map(restaurantId => ({ ...state.dumplings[restaurantId], restaurantId }))
+        .sort((a, b) => (a.name > b.name ? 1 : -1));
       return starred;
     },
     userHadStarsCount: state =>
@@ -63,6 +65,8 @@ const store = new Vuex.Store({
         restaurantId =>
           state.userCheckins.filter(checkin => checkin.restaurantId === restaurantId).length > 0,
       ).length,
+    alphabeticalDumplings: state =>
+      Object.values(state.dumplings).sort((a, b) => (a.name > b.name ? 1 : -1)),
   },
   actions: {
     fetchUserProfile({ commit, state }) {
@@ -80,9 +84,10 @@ const store = new Vuex.Store({
     },
     fetchDumplings({ commit }) {
       const fetcher = new Promise(resolve => {
-        if (Cookies.get('cached_dumplings')) {
+        const cachedValue = localStorage.getItem(CACHE_KEY);
+        if (cachedValue) {
           console.log('STATUS: Get dumplings from cache.'); // eslint-disable-line
-          return resolve(JSON.parse(localStorage.getItem('cached_dumplings')));
+          return resolve(JSON.parse(cachedValue));
         }
 
         console.log('STATUS: Load dumplings from db.'); // eslint-disable-line
@@ -90,7 +95,7 @@ const store = new Vuex.Store({
         const dumplingMap = {};
 
         dumplingsCollection
-          .where('year', '==', 2021)
+          .where('year', '==', 2023)
           .get()
           .then(snap => {
             const restaurantPromises = [];
@@ -112,9 +117,9 @@ const store = new Vuex.Store({
           .then(promises => {
             Promise.all(promises).then(snaps => {
               snaps.forEach(doc => {
-                dumplingMap[doc.id] = { ...dumplingMap[doc.id], ...doc.data() };
+                dumplingMap[doc.id] = { ...dumplingMap[doc.id], ...doc.data(), id: doc.id };
               });
-
+              localStorage.setItem(CACHE_KEY, JSON.stringify(dumplingMap));
               resolve(dumplingMap);
             });
           });

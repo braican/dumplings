@@ -4,11 +4,7 @@
       <h6 class="section-header section-header--color">
         {{ restaurantName }}
       </h6>
-      <button
-        class="back-button"
-        type="button"
-        @click="$emit('back')"
-      >
+      <button class="back-button" type="button" @click="$emit('back')">
         <BackArrowIcon />
         <span>Back</span>
       </button>
@@ -22,38 +18,18 @@
       <p class="your-rating">
         <span class="label">Your rating:</span>&nbsp;&nbsp;<span class="rating">{{ rating }}</span>
 
-        <span
-          v-for="n in rating"
-          :key="n"
-          class="dumpling-icon"
-        >
+        <span v-for="n in rating" :key="n" class="dumpling-icon">
           <DumplingIcon theme="red_outline" />
         </span>
       </p>
 
-      <input
-        v-model.number="rating"
-        type="range"
-        min="1"
-        max="5"
-        value="0"
-        class="rating-input"
-      >
+      <input v-model.number="rating" type="range" min="1" max="5" value="0" class="rating-input" />
 
-      <textarea
-        v-model="note"
-        class="dumpling__notes"
-        placeholder="Dumpling notes..."
-        rows="3"
-      />
+      <textarea v-model="note" class="dumpling__notes" placeholder="Dumpling notes..." rows="3" />
     </div>
 
     <div class="actions">
-      <button
-        v-if="!loading"
-        class="button check-in-button"
-        type="submit"
-      >
+      <button v-if="!loading" class="button check-in-button" type="submit">
         Check in
       </button>
       <p v-else>
@@ -131,13 +107,12 @@ export default {
         rating: this.rating,
       };
 
-      checkinsCollection.add(checkinData)
-        .then(() => {
-          console.log('STATUS: Checkin created successfully.'); // eslint-disable-line
-          this.loading = false;
-          this.$store.dispatch('incrementDisplayedCheckinCount');
-          this.close();
-        });
+      checkinsCollection.add(checkinData).then(() => {
+        console.log('STATUS: Checkin created successfully.'); // eslint-disable-line
+        this.loading = false;
+        this.$store.dispatch('incrementDisplayedCheckinCount');
+        this.close();
+      });
     },
     close() {
       this.$store.dispatch('closeLoggingDumpling');
@@ -221,5 +196,4 @@ export default {
 .check-in-button {
   width: 100%;
 }
-
 </style>
